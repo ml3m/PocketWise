@@ -7,7 +7,6 @@
 
 class ExpenseApp {
     private:
-        std::vector<Account> accounts;
         std::string accountDatabaseFile = "data/accounts.txt";
         std::string loggedInUser;
 
@@ -18,7 +17,9 @@ class ExpenseApp {
         ExpenseApp();
         void signUp(const std::string& uname, const std::string& pwd);
         bool login(const std::string& uname, const std::string& pwd);
-        void showLoggedInMenu();
+        void showLoggedInMenu(const Account& acc);
+        void modifyBudget(const Account& acc, int user_month, float user_budget);
+        std::vector<Account> accounts;
 };
 
 #endif // EXPENSEAPP_H

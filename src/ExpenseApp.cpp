@@ -49,9 +49,15 @@ bool ExpenseApp::login(const std::string& uname, const std::string& pwd) {
     return false;
 }
 
+void ExpenseApp::modifyBudget(const Account& acc, int user_month, float user_budget){
+    for (const Account& account : accounts) { // Changed loop variable name
+        if (account.getUsername() == loggedInUser){
+            account.cls_user_months[user_month].setBudget(user_budget); 
+        }
+    }
+}
 
-
-void ExpenseApp::showLoggedInMenu() {
+void ExpenseApp::showLoggedInMenu(const Account& acc) {
     std::cout << "Logged in as: " << loggedInUser << std::endl;
     std::cout << "1. Modify budget" << std::endl;
     std::cout << "2. See expenses" << std::endl;
@@ -64,8 +70,14 @@ void ExpenseApp::showLoggedInMenu() {
 
     switch (choice) {
         case 1:
-            // Modify budget function 
+            float user_budget;
+            int user_month;
             print_months();
+            std::cout<<"Enter Month: "<<std::endl;
+            std::cin>>user_month;
+            std::cout<<"Enter wanted budget"<<std::endl;
+            std::cin>>user_budget;
+            modifyBudget(acc, user_month, user_budget);
             break;
         case 2:
             // See expenses function

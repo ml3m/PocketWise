@@ -13,3 +13,4 @@ std::string Account::getPassword() const {
 bool Account::authenticate(const std::string& pwd) const {
     return password == pwd;
 }
+
