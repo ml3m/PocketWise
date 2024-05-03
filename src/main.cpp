@@ -1,254 +1,360 @@
 #include <iostream>
-#include <string>
-#include <vector>
 #include <fstream>
-#include <sstream>
+#include <string>
+#include <cstdio>
+#include "sha256.h"
+#include <unordered_map>
+#include <vector>
+#include <iomanip>
 
-struct Month {
-    int month;
-    float budget;
-    float total_expenses;
-    float total_savings;
-    float month_overall;
-    void setBudget(float);
-};
+using namespace std;
+unordered_map<string, string> users;
 
-class Account {
-private:
-    std::string username;
-    std::string password;
+void login();
+void createUser();
+void mainMenu(const string& username);
+void budgetsTab(const string& username);
+void addExpense(const string& username);
+void addRevenue(const string& username);
+void writeBudget(const string& username, int month, double budget);
+void writeGeneralBudget(const string& username, double budget);
+double readBudget(const string& username, int month);
+void writeTransaction(const string& username, int type, double amount, int category, const string& description);
+void readTransactions(const string& username);
+string getCategoryName(int category);
+void createUser();
+bool authenticateUser(const string& username, const string& password, sha256& algorithm);
 
-public:
-    Account(const std::string& uname, const std::string& pwd);
-    std::string getUsername() const;
-    std::string getPassword() const;
-    bool authenticate(const std::string& pwd) const;
-    Month cls_user_months[12];
-};
+int main() {
+    int choice;
+    do {
+        cout << "1. Login" << endl;
+        cout << "2. Create Account" << endl;
+        cout << "3. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
 
-class ExpenseApp {
-private:
-    std::string accountDatabaseFile = "data/accounts.txt";
-    std::string budgetDataFile = "data/appdata.txt";
-    std::string loggedInUser;
-
-    void loadAccounts();
-    void saveAccount(const Account& acc);
-    void modifyBudget(const Account& acc, int user_month, float user_budget);
-    void print_months() const;
-    void loadBudgetData();
-    void saveBudgetData(const std::string& uname, int month, float budget);
-
-public:
-    ExpenseApp();
-    void signUp(const std::string& uname, const std::string& pwd);
-    bool login(const std::string& uname, const std::string& pwd);
-    void showLoggedInMenu(const Account& acc);
-    std::vector<Account> accounts;
-};
-
-void Month::setBudget(float given_budget) {
-    budget = given_budget;
-}
-
-void ExpenseApp::print_months() const {
-    std::cout << "1.  January  " << std::endl;
-    std::cout << "2.  February " << std::endl;
-    std::cout << "3.  March    " << std::endl;
-    std::cout << "4.  April    " << std::endl;
-    std::cout << "5.  May      " << std::endl;
-    std::cout << "6.  June     " << std::endl;
-    std::cout << "7.  July     " << std::endl;
-    std::cout << "8.  August   " << std::endl;
-    std::cout << "9.  September" << std::endl;
-    std::cout << "10. October  " << std::endl;
-    std::cout << "11. November " << std::endl;
-    std::cout << "12. December " << std::endl;
-}
-
-Account::Account(const std::string& uname, const std::string& pwd) : username(uname), password(pwd) {}
-
-std::string Account::getUsername() const {
-    return username;
-}
-
-std::string Account::getPassword() const {
-    return password;
-}
-
-bool Account::authenticate(const std::string& pwd) const {
-    return password == pwd;
-}
-
-ExpenseApp::ExpenseApp() {
-    loadAccounts();
-    loadBudgetData();
-}
-
-void ExpenseApp::loadAccounts() {
-    std::ifstream infile(accountDatabaseFile);
-    std::string uname, pwd;
-
-    while (infile >> uname >> pwd) {
-        accounts.push_back(Account(uname, pwd));
-    }
-
-    infile.close();
-}
-
-void ExpenseApp::saveAccount(const Account& acc) {
-    std::ofstream outfile(accountDatabaseFile, std::ios_base::app);
-    outfile << acc.getUsername() << " " << acc.getPassword() << std::endl;
-    outfile.close();
-}
-
-void ExpenseApp::modifyBudget(const Account& acc, int user_month, float user_budget) {
-    if (user_month < 1 || user_month > 12) {
-        std::cout << "Invalid month." << std::endl;
-        return;
-    }
-
-    // Update budget in memory
-    // Assuming months are 1-based index
-    Month& month = const_cast<Month&>(acc.cls_user_months[user_month]);
-    month.setBudget(user_budget);
-    // Save budget data to file
-    saveBudgetData(acc.getUsername(), user_month, user_budget);
-}
-
-void ExpenseApp::loadBudgetData() {
-    std::ifstream infile(budgetDataFile);
-    std::string line;
-
-    while (std::getline(infile, line)) {
-        std::istringstream iss(line);
-        std::string uname;
-        int month;
-        float budget;
-
-        if (iss >> uname >> month >> budget) {
-            // Update budget in memory
-            // Assuming months are 1-based index
-            for (auto& acc : accounts) {
-                if (acc.getUsername() == uname) {
-                    acc.cls_user_months[month - 1].setBudget(budget);
-                    break;
-                }
-            }
+        switch(choice) {
+            case 1:
+                login();
+                break;
+            case 2:
+                createUser();
+                break;
+            case 3:
+                cout << "Exiting..." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please enter again." << endl;
         }
-    }
+    } while(choice != 3);
 
-    infile.close();
+    return 0;
 }
 
-void ExpenseApp::saveBudgetData(const std::string& uname, int month, float budget) {
-    std::ofstream outfile(budgetDataFile, std::ios_base::app);
-    outfile << uname << " " << month << " " << budget << std::endl;
-    outfile.close();
-}
+void createUser() {
+    string username, password;
+    cout << "Enter username: ";
+    cin >> username;
 
-void ExpenseApp::signUp(const std::string& uname, const std::string& pwd) {
-    for (const Account& acc : accounts) {
-        if (acc.getUsername() == uname) {
-            std::cout << "Username already exists. Please choose a different one." << std::endl;
+    ifstream infile("users.txt");
+    string storedUsername;
+    while (infile >> storedUsername) {
+        if (storedUsername == username) {
+            cout << "Username already exists. Please choose a different one." << endl;
+            infile.close();
             return;
         }
     }
-    Account newAccount(uname, pwd);
-    accounts.push_back(newAccount);
-    saveAccount(newAccount);
-    std::cout << "Account created successfully!" << std::endl;
-}
+    infile.close();
 
-bool ExpenseApp::login(const std::string& uname, const std::string& pwd) {
-    for (const Account& acc : accounts) {
-        if (acc.getUsername() == uname && acc.authenticate(pwd)) {
-            std::cout << "Login successful! Welcome, " << uname << "!" << std::endl;
-            loggedInUser = uname; 
-            return true;
-        }
-    }
-    std::cout << "Invalid username or password." << std::endl;
-    return false;
-}
+    cout << "Enter password: ";
+    cin >> password;
 
-void ExpenseApp::showLoggedInMenu(const Account& acc) {
-    std::cout << "Logged in as: " << loggedInUser << std::endl;
-    std::cout << "1. Modify budget" << std::endl;
-    std::cout << "2. See expenses" << std::endl;
-    std::cout << "3. See balance" << std::endl;
-    std::cout << "4. Logout" << std::endl;
-    std::cout << "Enter your choice: ";
+    string small_salt = "mlematikus";
+    password += small_salt; // salt aplication
+    ofstream outfile("users.txt", ios::app);
+    if (outfile.is_open()) {
+        sha256 algorithm;
+        std::string hashPassword = algorithm.doSha256(password);
 
-    int choice;
-    std::cin >> choice;
-
-    switch (choice) {
-        case 1:
-            float user_budget;
-            int user_month;
-            print_months();
-            std::cout << "Enter Month: ";
-            std::cin >> user_month;
-            std::cout << "Enter wanted budget: ";
-            std::cin >> user_budget;
-            modifyBudget(acc, user_month, user_budget);
-            break;
-        case 2:
-            // See expenses function
-            break;
-        case 3:
-            // See balance function
-            break;
-        case 4:
-            std::cout << "Logging out..." << std::endl;
-            loggedInUser.clear(); // Clear logged-in user
-            break;
-        default:
-            std::cout << "Invalid choice. Please enter a valid option." << std::endl;
-            break;
+        outfile << username << " " << hashPassword << endl;
+        outfile.close();
+        cout << "Account created successfully!" << endl;
+    } else {
+        cout << "Error: Unable to create account." << endl;
     }
 }
 
-int main() {
-    ExpenseApp app;
+void login() {
+    string username, password;
+    cout << "Enter username: ";
+    cin >> username;
+    cout << "Enter password: ";
+    cin >> password;
 
-    int choice;
-    std::string username, password;
+    string small_salt = "mlematikus";
+    sha256 algorithm;
+    password += small_salt; //salt aplication
+    string hashedPassword = algorithm.doSha256(password);
 
-    do {
-        std::cout << "Welcome to the Finance App" << std::endl;
-        std::cout << "1. log In" << std::endl;
-        std::cout << "2. sign Up" << std::endl;
-        std::cout << "3. Quit" << std::endl;
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-
-        switch (choice) {
-            case 1:
-                std::cout << "Enter username: ";
-                std::cin >> username;
-                std::cout << "Enter password: ";
-                std::cin >> password;
-                if (app.login(username, password)) {
-                    app.showLoggedInMenu(Account(username, password));
+    ifstream infile("users.txt");
+    if (infile.is_open()) {
+        string storedUsername, storedHashedPassword;
+        bool userFound = false;
+        while (infile >> storedUsername >> storedHashedPassword) {
+            if (storedUsername == username) {
+                userFound = true;
+                if (hashedPassword == storedHashedPassword) {
+                    cout << "Login successful!" << endl;
+                    mainMenu(username);
+                    return;
+                } else {
+                    cout << "Login failed. Please try again." << endl;
+                    return; 
                 }
+            }
+        }
+        if (!userFound) {
+            cout << "User not found. Please try again." << endl;
+        }
+        infile.close();
+    } else {
+        cout << "Error: Unable to open users.txt." << endl;
+    }
+}
+
+bool authenticateUser(const string& username, const string& password, sha256& algorithm) {
+    if (users.find(username) != users.end()) {
+        string hashedPassword = algorithm.doSha256(password);
+        if (hashedPassword == users[username]) {
+            cout << "User " << username << " authenticated successfully." << endl;
+            return true; 
+        } else {
+            cout << "Invalid password for user " << username << "." << endl;
+            return false; 
+        }
+    } else {
+        cout << "User " << username << " not found." << endl;
+        return false;
+    }
+}
+
+void mainMenu(const string& username) {
+    int choice;
+    do {
+        cout << "\nMain Menu" << endl;
+        cout << "1. Budgets Tab" << endl;
+        cout << "2. Add Expense" << endl;
+        cout << "3. Add Revenue" << endl;
+        cout << "4. Goal Tab" << endl;
+        cout << "5. Investments Tab" << endl;
+        cout << "6. Dashboard" << endl;
+        cout << "7. Log Out" << endl;
+        cout << "8. Quit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch(choice) {
+            case 1:
+                budgetsTab(username);
                 break;
             case 2:
-                std::cout << "Enter username: ";
-                std::cin >> username;
-                std::cout << "Enter password: ";
-                std::cin >> password;
-                app.signUp(username, password);
+                addExpense(username);
                 break;
             case 3:
-                std::cout << "Exiting..." << std::endl;
+                addRevenue(username);
+                break;
+            case 4:
+                cout << "Goal Tab" << endl;
+                break;
+            case 5:
+                cout << "Investments Tab" << endl;
+                break;
+            case 6:
+                cout << "Dashboard" << endl;
+                break;
+            case 7:
+                cout << "Logging out..." << endl;
+                break;
+            case 8:
+                cout << "Exiting..." << endl;
                 break;
             default:
-                std::cout << "Invalid choice. Please enter a valid option." << std::endl;
-                break;
+                cout << "Invalid choice. Please enter again." << endl;
         }
-    } while (choice != 3);
+    } while(choice != 7 && choice != 8);
+}
 
-    return 0;
+void budgetsTab(const string& username) {
+    int choice;
+    do {
+        cout << "\nBudgets Tab" << endl;
+        cout << "1. Set General Budget" << endl;
+        cout << "2. Set Month Budget" << endl;
+        cout << "3. Back to Main Menu" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch(choice) {
+            case 1:
+                double budget;
+                cout << "Enter budget: ";
+                cin >> budget;
+                writeGeneralBudget(username, budget);
+                break;
+            case 2: {
+                int month;
+                double budget;
+                cout << "Enter month (1-12): ";
+                cin >> month;
+                cout << "Enter budget: ";
+                cin >> budget;
+                writeBudget(username, month, budget);
+                break;
+            }
+            case 3:
+                cout << "Returning to Main Menu..." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please enter again." << endl;
+        }
+    } while(choice != 3);
+}
+
+
+void writeGeneralBudget(const string& username, double budget) {
+    ifstream infile("budgets.txt");
+    ofstream tempfile("temp.txt");
+    
+    bool entryExists = false;
+    string line;
+    
+    while (getline(infile, line)) {
+        istringstream iss(line);
+        string usr;
+        int m;
+        double b;
+        
+        if (iss >> usr >> m >> b) {
+            if (usr == username) {
+                entryExists = true;
+                char choice;
+                cout << "Another budget entry for the same username already exists. Do you want to overwrite it? (Y/N): ";
+                cin >> choice;
+                if (toupper(choice) != 'Y') {
+                    cout << "Operation cancelled." << endl;
+                    return;
+                }
+            } else {
+                tempfile << line << endl;
+            }
+        }
+    }
+    infile.close();
+    tempfile.close();
+    
+    remove("budgets.txt");
+    rename("temp.txt", "budgets.txt");
+    
+    ofstream outfile("budgets.txt", ios::app);
+    if (outfile.is_open()) {
+        for (int i = 1; i <= 12; ++i) {
+            outfile << username << " " << i << " " << budget << endl;
+        }
+        cout << "Budget set successfully!" << endl;
+        outfile.close();
+    } else {
+        cout << "Error: Unable to set budget." << endl;
+    }
+}
+
+void writeBudget(const string& username, int month, double budget) {
+    ifstream infile("budgets.txt");
+    ofstream tempfile("temp.txt");
+    
+    bool entryExists = false;
+    string line;
+    
+    while (getline(infile, line)) {
+        istringstream iss(line);
+        string usr;
+        int m;
+        double b;
+        
+        if (iss >> usr >> m >> b) {
+            if (usr == username && m == month) {
+                entryExists = true;
+                char choice;
+                cout << "Another budget entry for the same username and month already exists. Do you want to overwrite it? (Y/N): ";
+                cin >> choice;
+                if (toupper(choice) != 'Y') {
+                    cout << "Operation cancelled." << endl;
+                    return;
+                }
+            } else {
+                tempfile << line << endl;
+            }
+        }
+    }
+    infile.close();
+    tempfile.close();
+    
+    remove("budgets.txt");
+    rename("temp.txt", "budgets.txt");
+    
+    ofstream outfile("budgets.txt", ios::app);
+    if (outfile.is_open()) {
+        outfile << username << " " << month << " " << budget << endl;
+        cout << "Budget set successfully!" << endl;
+        outfile.close();
+    } else {
+        cout << "Error: Unable to set budget." << endl;
+    }
+}
+
+double readBudget(const string& username, int month) {
+    ifstream infile("budgets.txt");
+    double budget = 0.0;
+    string line;
+    while (getline(infile, line)) {
+        string usr;
+        int m;
+        double b;
+        istringstream iss(line);
+        if (iss >> usr >> m >> b) {
+            if (usr == username && m == month) {
+                budget = b;
+                break;
+            }
+        }
+    }
+    infile.close();
+    return budget;
+}
+
+void writeTransaction(const string& username, int type, double amount, int category, const string& description) {
+    // Implement write transaction functionality
+}
+
+void readTransactions(const string& username) {
+    // Implement read transactions functionality
+}
+
+/*
+string getCategoryName(int category) {
+    // Implement get category name functionality
+}
+
+*/
+
+void addExpense(const string& username) {
+    // Implement add expense functionality
+}
+
+void addRevenue(const string& username) {
+    // Implement add revenue functionality
 }
