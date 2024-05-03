@@ -110,8 +110,8 @@ void ExpenseApp::modifyBudget(const Account& acc, int user_month, float user_bud
 
     // Update budget in memory
     // Assuming months are 1-based index
-    acc.cls_user_months[user_month].setBudget(user_budget);
-
+    Month& month = const_cast<Month&>(acc.cls_user_months[user_month]);
+    month.setBudget(user_budget);
     // Save budget data to file
     saveBudgetData(acc.getUsername(), user_month, user_budget);
 }
@@ -218,9 +218,9 @@ int main() {
 
     do {
         std::cout << "Welcome to the Finance App" << std::endl;
-        std::cout << "1. Sign Up" << std::endl;
-        std::cout << "2. Log In" << std::endl;
-        std::cout << "3. Exit" << std::endl;
+        std::cout << "1. log In" << std::endl;
+        std::cout << "2. sign Up" << std::endl;
+        std::cout << "3. Quit" << std::endl;
         std::cout << "Enter your choice: ";
         std::cin >> choice;
 
@@ -230,16 +230,16 @@ int main() {
                 std::cin >> username;
                 std::cout << "Enter password: ";
                 std::cin >> password;
-                app.signUp(username, password);
+                if (app.login(username, password)) {
+                    app.showLoggedInMenu(Account(username, password));
+                }
                 break;
             case 2:
                 std::cout << "Enter username: ";
                 std::cin >> username;
                 std::cout << "Enter password: ";
                 std::cin >> password;
-                if (app.login(username, password)) {
-                    app.showLoggedInMenu(Account(username, password));
-                }
+                app.signUp(username, password);
                 break;
             case 3:
                 std::cout << "Exiting..." << std::endl;
