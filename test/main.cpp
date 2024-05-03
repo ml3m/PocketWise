@@ -348,3 +348,13 @@ void readTransactions(const string& username) {
 string getCategoryName(int category) {
     // Implement get category name functionality
 }
+
+*/
+
+void addExpense(const string& username) {
+    // Implement add expense functionality
+}
+
+void addRevenue(const string& username) {
+    // Implement add revenue functionality
+}
