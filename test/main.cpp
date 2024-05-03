@@ -4,8 +4,12 @@
 #include <vector>
 #include <iomanip>
 #include <cstdio>
+#include "sha256.h"
+#include <unordered_map>
 
 using namespace std;
+
+unordered_map<string, string> users;
 
 // Function prototypes
 void login();
@@ -20,6 +24,8 @@ double readBudget(const string& username, int month);
 void writeTransaction(const string& username, int type, double amount, int category, const string& description);
 void readTransactions(const string& username);
 string getCategoryName(int category);
+void createUser();
+bool authenticateUser(const string& username, const string& password, sha256& algorithm);
 
 int main() {
     int choice;
@@ -49,6 +55,44 @@ int main() {
     return 0;
 }
 
+void createUser() {
+    string username, password;
+    cout << "Enter username: ";
+    cin >> username;
+
+    // Check if the username already exists
+    ifstream infile("users.txt");
+    string storedUsername;
+    while (infile >> storedUsername) {
+        if (storedUsername == username) {
+            cout << "Username already exists. Please choose a different one." << endl;
+            infile.close();
+            return;
+        }
+    }
+    infile.close();
+
+    cout << "Enter password: ";
+    cin >> password;
+
+    string small_salt = "mlematikus";
+    password += small_salt; // salt aplication
+    // Save username and password to the users.txt file
+    ofstream outfile("users.txt", ios::app);
+    if (outfile.is_open()) {
+        // Hash the password
+        sha256 algorithm;
+        std::string hashPassword = algorithm.doSha256(password);
+
+        // Write username and hashed password to the file
+        outfile << username << " " << hashPassword << endl;
+        outfile.close();
+        cout << "Account created successfully!" << endl;
+    } else {
+        cout << "Error: Unable to create account." << endl;
+    }
+}
+
 void login() {
     string username, password;
     cout << "Enter username: ";
@@ -56,27 +100,40 @@ void login() {
     cout << "Enter password: ";
     cin >> password;
 
-    // Authenticate user (you can implement your own authentication logic here)
-    // For simplicity, I'm assuming any username/password combination is valid
-    cout << "Login successful!" << endl;
-    mainMenu(username);
-}
+    // Hash the input password
+    string small_salt = "mlematikus";
+    sha256 algorithm;
+    password += small_salt; //salt aplication
+    string hashedPassword = algorithm.doSha256(password);
 
-void createUser() {
-    string username, password;
-    cout << "Enter username: ";
-    cin >> username;
-    cout << "Enter password: ";
-    cin >> password;
-
-    // Save username and password to a file (you can implement your own logic here)
-    ofstream outfile("users.txt", ios::app);
-    if (outfile.is_open()) {
-        outfile << username << " " << password << endl;
-        outfile.close();
-        cout << "Account created successfully!" << endl;
+    // Authenticate user by checking the users.txt file
+    ifstream infile("users.txt");
+    if (infile.is_open()) {
+        string storedUsername, storedHashedPassword;
+        bool userFound = false;
+        // Read each line from the file
+        while (infile >> storedUsername >> storedHashedPassword) {
+            // Check if the provided username matches any in the file
+            if (storedUsername == username) {
+                userFound = true;
+                // Compare the hashed input password with the stored hashed password
+                if (hashedPassword == storedHashedPassword) {
+                    cout << "Login successful!" << endl;
+                    mainMenu(username);
+                    return; // Exit the function after successful login
+                } else {
+                    cout << "Login failed. Please try again." << endl;
+                    return; // Exit the function after failed login
+                }
+            }
+        }
+        // If the provided username was not found in the file
+        if (!userFound) {
+            cout << "User not found. Please try again." << endl;
+        }
+        infile.close();
     } else {
-        cout << "Error: Unable to create account." << endl;
+        cout << "Error: Unable to open users.txt." << endl;
     }
 }
 
@@ -308,4 +365,26 @@ void readTransactions(const string& username) {
 string getCategoryName(int category) {
     // Implement get category name functionality
 }
+
 */
+
+// Function to authenticate a user
+bool authenticateUser(const string& username, const string& password, sha256& algorithm) {
+    // Check if the username exists in the map
+    if (users.find(username) != users.end()) {
+        // Hash the input password
+        string hashedPassword = algorithm.doSha256(password);
+        // Compare the hashed input password with the stored hashed password
+        if (hashedPassword == users[username]) {
+            cout << "User " << username << " authenticated successfully." << endl;
+            return true; // Authentication successful
+        } else {
+            cout << "Invalid password for user " << username << "." << endl;
+            return false; // Incorrect password
+        }
+    } else {
+        cout << "User " << username << " not found." << endl;
+        return false; // User not found
+    }
+}
+
