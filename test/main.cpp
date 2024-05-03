@@ -1,17 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
-#include <iomanip>
 #include <cstdio>
 #include "sha256.h"
 #include <unordered_map>
+#include <vector>
+#include <iomanip>
 
 using namespace std;
-
 unordered_map<string, string> users;
 
-// Function prototypes
 void login();
 void createUser();
 void mainMenu(const string& username);
@@ -60,7 +58,6 @@ void createUser() {
     cout << "Enter username: ";
     cin >> username;
 
-    // Check if the username already exists
     ifstream infile("users.txt");
     string storedUsername;
     while (infile >> storedUsername) {
@@ -77,14 +74,11 @@ void createUser() {
 
     string small_salt = "mlematikus";
     password += small_salt; // salt aplication
-    // Save username and password to the users.txt file
     ofstream outfile("users.txt", ios::app);
     if (outfile.is_open()) {
-        // Hash the password
         sha256 algorithm;
         std::string hashPassword = algorithm.doSha256(password);
 
-        // Write username and hashed password to the file
         outfile << username << " " << hashPassword << endl;
         outfile.close();
         cout << "Account created successfully!" << endl;
@@ -100,40 +94,50 @@ void login() {
     cout << "Enter password: ";
     cin >> password;
 
-    // Hash the input password
     string small_salt = "mlematikus";
     sha256 algorithm;
     password += small_salt; //salt aplication
     string hashedPassword = algorithm.doSha256(password);
 
-    // Authenticate user by checking the users.txt file
     ifstream infile("users.txt");
     if (infile.is_open()) {
         string storedUsername, storedHashedPassword;
         bool userFound = false;
-        // Read each line from the file
         while (infile >> storedUsername >> storedHashedPassword) {
-            // Check if the provided username matches any in the file
             if (storedUsername == username) {
                 userFound = true;
-                // Compare the hashed input password with the stored hashed password
                 if (hashedPassword == storedHashedPassword) {
                     cout << "Login successful!" << endl;
                     mainMenu(username);
-                    return; // Exit the function after successful login
+                    return;
                 } else {
                     cout << "Login failed. Please try again." << endl;
-                    return; // Exit the function after failed login
+                    return; 
                 }
             }
         }
-        // If the provided username was not found in the file
         if (!userFound) {
             cout << "User not found. Please try again." << endl;
         }
         infile.close();
     } else {
         cout << "Error: Unable to open users.txt." << endl;
+    }
+}
+
+bool authenticateUser(const string& username, const string& password, sha256& algorithm) {
+    if (users.find(username) != users.end()) {
+        string hashedPassword = algorithm.doSha256(password);
+        if (hashedPassword == users[username]) {
+            cout << "User " << username << " authenticated successfully." << endl;
+            return true; 
+        } else {
+            cout << "Invalid password for user " << username << "." << endl;
+            return false; 
+        }
+    } else {
+        cout << "User " << username << " not found." << endl;
+        return false;
     }
 }
 
@@ -221,13 +225,6 @@ void budgetsTab(const string& username) {
     } while(choice != 3);
 }
 
-void addExpense(const string& username) {
-    // Implement add expense functionality
-}
-
-void addRevenue(const string& username) {
-    // Implement add revenue functionality
-}
 
 void writeGeneralBudget(const string& username, double budget) {
     ifstream infile("budgets.txt");
@@ -236,19 +233,15 @@ void writeGeneralBudget(const string& username, double budget) {
     bool entryExists = false;
     string line;
     
-    // Read the input file line by line
     while (getline(infile, line)) {
         istringstream iss(line);
         string usr;
         int m;
         double b;
         
-        // Parse the line into username, month, and budget
         if (iss >> usr >> m >> b) {
-            // Check if the entry matches the given username
             if (usr == username) {
                 entryExists = true;
-                // Prompt user to confirm overwrite
                 char choice;
                 cout << "Another budget entry for the same username already exists. Do you want to overwrite it? (Y/N): ";
                 cin >> choice;
@@ -257,7 +250,6 @@ void writeGeneralBudget(const string& username, double budget) {
                     return;
                 }
             } else {
-                // Write the line to the temporary file if it doesn't match the username
                 tempfile << line << endl;
             }
         }
@@ -265,11 +257,9 @@ void writeGeneralBudget(const string& username, double budget) {
     infile.close();
     tempfile.close();
     
-    // Remove the original file and rename the temporary file to the original filename
     remove("budgets.txt");
     rename("temp.txt", "budgets.txt");
     
-    // Write the new entries to the file
     ofstream outfile("budgets.txt", ios::app);
     if (outfile.is_open()) {
         for (int i = 1; i <= 12; ++i) {
@@ -289,19 +279,15 @@ void writeBudget(const string& username, int month, double budget) {
     bool entryExists = false;
     string line;
     
-    // Read the input file line by line
     while (getline(infile, line)) {
         istringstream iss(line);
         string usr;
         int m;
         double b;
         
-        // Parse the line into username, month, and budget
         if (iss >> usr >> m >> b) {
-            // Check if the entry matches the given username and month
             if (usr == username && m == month) {
                 entryExists = true;
-                // Prompt user to confirm overwrite
                 char choice;
                 cout << "Another budget entry for the same username and month already exists. Do you want to overwrite it? (Y/N): ";
                 cin >> choice;
@@ -310,7 +296,6 @@ void writeBudget(const string& username, int month, double budget) {
                     return;
                 }
             } else {
-                // Write the line to the temporary file if it doesn't match the username and month
                 tempfile << line << endl;
             }
         }
@@ -318,11 +303,9 @@ void writeBudget(const string& username, int month, double budget) {
     infile.close();
     tempfile.close();
     
-    // Remove the original file and rename the temporary file to the original filename
     remove("budgets.txt");
     rename("temp.txt", "budgets.txt");
     
-    // Write the new entry to the file
     ofstream outfile("budgets.txt", ios::app);
     if (outfile.is_open()) {
         outfile << username << " " << month << " " << budget << endl;
@@ -365,26 +348,3 @@ void readTransactions(const string& username) {
 string getCategoryName(int category) {
     // Implement get category name functionality
 }
-
-*/
-
-// Function to authenticate a user
-bool authenticateUser(const string& username, const string& password, sha256& algorithm) {
-    // Check if the username exists in the map
-    if (users.find(username) != users.end()) {
-        // Hash the input password
-        string hashedPassword = algorithm.doSha256(password);
-        // Compare the hashed input password with the stored hashed password
-        if (hashedPassword == users[username]) {
-            cout << "User " << username << " authenticated successfully." << endl;
-            return true; // Authentication successful
-        } else {
-            cout << "Invalid password for user " << username << "." << endl;
-            return false; // Incorrect password
-        }
-    } else {
-        cout << "User " << username << " not found." << endl;
-        return false; // User not found
-    }
-}
-
