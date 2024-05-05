@@ -13,7 +13,6 @@ lol 10 11111
 mlem 1 666
 mlem 2 666
 mlem 3 666
-mlem 4 666
 mlem 5 666
 mlem 6 666
 mlem 7 666
@@ -22,3 +21,16 @@ mlem 9 666
 mlem 10 666
 mlem 11 666
 mlem 12 666
+loredanaifju 1 500
+loredanaifju 2 500
+loredanaifju 3 500
+loredanaifju 4 500
+loredanaifju 5 500
+loredanaifju 6 500
+loredanaifju 7 500
+loredanaifju 8 500
+loredanaifju 9 500
+loredanaifju 10 500
+loredanaifju 11 500
+loredanaifju 12 500
+mlem 4 1500
