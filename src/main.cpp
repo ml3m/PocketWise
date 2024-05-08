@@ -8,10 +8,10 @@
 #include <unordered_map>
 #include <vector>
 #include <iomanip>
-
-//#include <matplot/matplot.h>
+#include <matplot/matplot.h>
 
 #include "sha256.h"
+
 
 std::unordered_map<std::string, std::string> users;
 
@@ -241,7 +241,7 @@ void mainMenu(const std::string& username) {
                 std::cout << "Dashboard" << std::endl;
                 monthAnalysis(username);
                 dashboard(username);
-                //updatePieChart(username);
+                updatePieChart(username);
                 break;
             case 7:
                 std::cout << "Logging out..." << std::endl;
@@ -964,7 +964,6 @@ void investmentTab(const std::string& username) {
 }
 
 
-/*
 void updatePieChart(const std::string& username) {
     std::vector<double> amounts;
     std::vector<std::string> categories;
@@ -1001,4 +1000,4 @@ void updatePieChart(const std::string& username) {
     matplot::legend(categories);
     matplot::show();
 }
-*/
+
