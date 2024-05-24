@@ -14,3 +14,9 @@ mlem 600 5 1 hotel
 mlem 499 3 5 gas
 mlem 120 5 4 fishOil
 mlem 15 5 3 brutarie
+mlem 799 5 2 train
+mlem 10 12 3 nuggets
+mlem 80 12 8 facemask
+mlem 50 12 1 matt
+mlem 600 8 1 doghouse
+a 80 1 8 massage

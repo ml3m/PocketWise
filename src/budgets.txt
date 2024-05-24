@@ -34,3 +34,15 @@ loredanaifju 11 500
 loredanaifju 12 500
 mlem 4 1500
 mlem 5 550
+a 1 666
+a 2 666
+a 3 666
+a 5 666
+a 6 666
+a 7 666
+a 8 666
+a 10 666
+a 11 666
+a 12 666
+a 4 123
+a 9 12312

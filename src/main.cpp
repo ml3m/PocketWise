@@ -12,11 +12,29 @@
 #include <string>
 #include <cstdio>
 #include <vector>
-#include <ios>
+#include <thread>
+#include <chrono>
+#include <ctime>
+
 #include "sha256.h"
 
 std::unordered_map<std::string, std::string> users;
+void print_topClock();
 
+std::string getCurrentTimeAndDay() {
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+    std::tm *ltm = std::localtime(&now_time);
+
+    char timeBuffer[6]; 
+    char dayBuffer[10];
+
+    std::strftime(timeBuffer, sizeof(timeBuffer), "%H:%M", ltm);
+    std::strftime(dayBuffer, sizeof(dayBuffer), "%A", ltm);
+
+    std::string timeDayStr = std::string(timeBuffer) + " " + std::string(dayBuffer);
+    return timeDayStr;
+}
 std::string get_password() {
     // Disable echoing
     termios old_term, new_term;
@@ -46,8 +64,18 @@ std::string center_text(const std::string &text, int width) {
     int pad = (width - text.size()) / 2;
     return std::string(pad, ' ') + text;
 }
+int central_print_prepare_terminal(int printing_height){
+        int terminal_width, terminal_height;
+        get_terminal_size(terminal_width, terminal_height);
+        int half_height = terminal_height / 2;
 
-// Function to clear the screen
+        for (int i = 0; i < half_height - printing_height/2; ++i) {
+            std::cout << std::endl;
+        }
+        return terminal_width;
+}
+
+// this is very cool
 void clear_screen() {
     std::cout << "\033[2J\033[1;1H";
 }
@@ -76,11 +104,10 @@ public:
 MainMenu::MainMenu(){}
 
 void MainMenu::printmenu() const {
-
+    // this is the only one for mainMenu
+    print_topClock();
     int terminal_width, terminal_height;
     get_terminal_size(terminal_width, terminal_height);
-
-    clear_screen();
 
     int menu_height = 10; // Number of lines in the menu
 
@@ -163,6 +190,22 @@ class Investments{
 };
 
 
+void print_topClock(){
+    int terminal_width, terminal_height;
+    get_terminal_size(terminal_width, terminal_height);
+
+    int clock_start = 2;
+    int clock_height = 1;
+
+    for (int i = 0; i < clock_height; ++i) {
+        std::cout << std::endl;
+    }
+
+    std::string currentTimeAndDay = getCurrentTimeAndDay();
+    std::cout << "\r" << std::setw(15) << std::left << center_text(currentTimeAndDay, terminal_width) << std::flush;
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+}
+
 /************************* MAIN ******************************/ 
 
 int main() {
@@ -170,72 +213,75 @@ int main() {
     int choice;
     UserAuthentication loger;
     do {
-    int terminal_width, terminal_height;
-    get_terminal_size(terminal_width, terminal_height);
+        int terminal_width, terminal_height;
+        get_terminal_size(terminal_width, terminal_height);
+        clear_screen();
 
-    // Clear the screen
-    clear_screen();
+        print_topClock();
 
-    // ASCII art
-    std::string art[] = {
-        " ____            _        _ __        ___          ",
-        "|  _ \\ ___   ___| | _____| |\\ \\      / (_)___  ___ ",
-        "| |_) / _ \\ / __| |/ / _ \\ __\\ \\ /\\ / /| / __|/ _ \\",
-        "|  __/ (_) | (__|   <  __/ |_ \\ V  V / | \\__ \\  __/",
-        "|_|   \\___/ \\___|_|\\_\\___|\\__| \\_/\\_/  |_|___/\\___|"
-    };
+        std::string art[] = {
+            " ____            _        _ __        ___          ",
+            "|  _ \\ ___   ___| | _____| |\\ \\      / (_)___  ___ ",
+            "| |_) / _ \\ / __| |/ / _ \\ __\\ \\ /\\ / /| / __|/ _ \\",
+            "|  __/ (_) | (__|   <  __/ |_ \\ V  V / | \\__ \\  __/",
+            "|_|   \\___/ \\___|_|\\_\\___|\\__| \\_/\\_/  |_|___/\\___|"
+        };
 
-    // Menu options
-    std::string login = "1. Login";
-    std::string create_account = "2. Create Account";
-    std::string quit = "3. Quit";
-    std::string enter_choice = "Enter your choice: ";
+        // Menu options
+        std::string login = "1. Login";
+        std::string create_account = "2. Create Account";
+        std::string quit = "3. Quit";
+        std::string enter_choice = "Enter your choice: ";
 
-    // Center each line of the ASCII art horizontally
-    for (std::string &line : art) {
-        line = center_text(line, terminal_width);
-    }
+        // Center each line of the ASCII art horizontally
+        for (std::string &line : art) {
+            line = center_text(line, terminal_width);
+        }
 
-    // Center each line of the menu horizontally
-    login = center_text(login, terminal_width);
-    create_account = center_text(create_account, terminal_width);
-    quit = center_text(quit, terminal_width);
-    enter_choice = center_text(enter_choice, terminal_width);
+        // Center each line of the menu horizontally
+        login = center_text(login, terminal_width);
+        create_account = center_text(create_account, terminal_width);
+        quit = center_text(quit, terminal_width);
+        enter_choice = center_text(enter_choice, terminal_width);
 
-    // Calculate the total number of lines in the ASCII art and menu
-    int art_height = sizeof(art) / sizeof(art[0]);
-    int menu_height = 4; // Number of lines in the menu
+        // Calculate the total number of lines in the ASCII art and menu
+        int art_height = sizeof(art) / sizeof(art[0]);
+        int menu_height = 4; // Number of lines in the menu
 
-    // Calculate the vertical positions
-    int half_height = terminal_height / 2;
-    int art_start = half_height - (art_height / 2 + menu_height + 1); // Add extra space between the art and the menu
-    int menu_start = art_start + art_height + 2; // Add extra space between the art and the menu
+        // Calculate the vertical positions
+        int half_height = terminal_height / 2;
+        int art_start = half_height - (art_height / 2 + menu_height + 1); // Add extra space between the art and the menu
+        int menu_start = art_start + art_height + 2; // Add extra space between the art and the menu
 
-    // Print blank lines to position the ASCII art
-    for (int i = 0; i < art_start; ++i) {
-        std::cout << std::endl;
-    }
+        // Print blank lines to position the ASCII art
+        for (int i = 0; i < art_start; ++i) {
+            std::cout << std::endl;
+        }
 
-    // Print the ASCII art
-    for (const std::string &line : art) {
-        std::cout << line << std::endl;
-    }
+        // Print the ASCII art
+        for (const std::string &line : art) {
+            std::cout << line << std::endl;
+        }
 
-    // Print blank lines to position the menu
-    for (int i = art_start + art_height; i < menu_start; ++i) {
-        std::cout << std::endl;
-    }
+        // Print blank lines to position the menu
+        for (int i = art_start + art_height; i < menu_start; ++i) {
+            std::cout << std::endl;
+        }
 
-    // Print the centered menu
-    std::cout << login << std::endl;
-    std::cout << create_account << std::endl;
-    std::cout << quit << std::endl;
-    std::cout << enter_choice;
+        // Print the centered menu
+        std::cout << login << std::endl;
+        std::cout << create_account << std::endl;
+        std::cout << quit << std::endl;
+        std::cout << enter_choice;
         std::cin >> choice;
+
         std::cin.ignore();
+
+
 
         switch(choice) {
             case 1:
+                clear_screen();
                 loger.login();
                 break;
             case 2:
@@ -253,19 +299,13 @@ int main() {
 }
 
 void UserAuthentication::createUser() {
+    
     std::string username, password;
-    int terminal_width, terminal_height;
-    get_terminal_size(terminal_width, terminal_height);
 
     clear_screen();
-
-    int menu_height = 3; 
-
-    int half_height = terminal_height / 2;
-
-    for (int i = 0; i < half_height - menu_height/2; ++i) {
-        std::cout << std::endl;
-    }
+    print_topClock();
+    int printing_height  = 3; 
+    int terminal_width = central_print_prepare_terminal(printing_height);
 
     std::cout << center_text("Enter username: ", terminal_width);
     std::cin >> username;
@@ -302,15 +342,18 @@ void UserAuthentication::createUser() {
     }
 }
 
+
 void UserAuthentication::login() {
     int terminal_width, terminal_height;
     get_terminal_size(terminal_width, terminal_height);
     int menu_height = 2; 
     int half_height = terminal_height / 2;
+    int printing_height = 2;
     
-    clear_screen();
+    print_topClock();
+    int clock_height = 3;
 
-    for (int i = 0; i < half_height - menu_height; ++i) {
+    for (int i = clock_height; i<half_height-menu_height+clock_height; ++i) {
         std::cout << std::endl;
     }
 
@@ -339,6 +382,7 @@ void UserAuthentication::login() {
                     this->username = username;
                     this->password = password;
                     MainMenu mymenu;
+                    clear_screen();
                     std::cout<<mymenu;
                     mymenu.mainMenu(username);
                     return;
@@ -400,9 +444,6 @@ void MainMenu::mainMenu(const std::string& username) {
     int choice;
     int need_menu = 0;
     do {
-        // printing from here is in operator <<
-        std::cin >> choice;
-        std::cin.ignore();
         BudgetManagement mybudget;
         ExpenseRevenue myEx_Rev;
         Analysis myanalysis;
@@ -411,44 +452,42 @@ void MainMenu::mainMenu(const std::string& username) {
         MainMenu repeating_menu;
 
         if (need_menu) {
+            clear_screen();
             std::cout << repeating_menu;
         }
+        std::cin >> choice;
+        std::cin.ignore();
+
+
         switch(choice) {
 
             case 1:
-                clear_screen();
                 mybudget.budgetsTab(username);
                 need_menu = 1;
-                printmenu();
                 break;
             case 2:
-                clear_screen();
                 myEx_Rev.addExpense(username);
                 need_menu = 1;
-                printmenu();
                 break;
             case 3:
-                clear_screen();
                 myEx_Rev.addRevenue(username);
                 need_menu = 1;
                 break;
             case 4:
-                clear_screen();
                 std::cout << "Goal Tab" << std::endl;
                 mygoals.GoalTab(username);
                 need_menu = 1;
                 break;
             case 5:
-                clear_screen();
                 std::cout << "Investments Tab" << std::endl;
                 myinvestments.investmentTab(username);
                 need_menu = 1;
                 break;
             case 6:
-                clear_screen();
                 std::cout << "Dashboard" << std::endl;
                 myanalysis.monthAnalysis(username);
                 dashboard(username);
+                // annoying thingy 
                 //myanalysis.updatePieChart(username);
                 need_menu = 1;
                 break;
@@ -466,36 +505,51 @@ void MainMenu::mainMenu(const std::string& username) {
 }
 
 void BudgetManagement::budgetsTab(const std::string& username) {
-    int choice;
+    int choice, need_menu = 0;
+    clear_screen();
     do {
-        std::cout << "\nBudgets Tab" << std::endl;
-        std::cout << "1. Set General Budget" << std::endl;
-        std::cout << "2. Set Month Budget" << std::endl;
-        std::cout << "3. Print Budgets" << std::endl;
-        std::cout << "4. Back to Main Menu" << std::endl;
-        std::cout << "Enter your choice: ";
+        if (need_menu) {
+            clear_screen();
+        }
+        print_topClock();
+        int printing_height = 6;
+        int terminal_width = central_print_prepare_terminal(printing_height);
+
+
+        std::cout << center_text("Budgets Tab\n",terminal_width);
+        std::cout << center_text("1. Set General Budget\n", terminal_width);
+        std::cout << center_text("2. Set Month Budget\n", terminal_width);
+        std::cout << center_text("3. Print Budgets\n" ,terminal_width);
+        std::cout << center_text("4. Back to Main Menu\n", terminal_width);
+        std::cout << center_text("Enter your choice: ", terminal_width);
         std::cin >> choice;
         std::cin.ignore();
+
+
 
         switch(choice) {
             case 1:
                 double budget;
-                std::cout << "Enter budget: ";
+                std::cout << std::endl <<center_text("Enter budget: ", terminal_width);
                 std::cin >> budget;
                 writeGeneralBudget(username, budget);
+                need_menu = 1;
                 break;
             case 2: {
                 int month;
                 double budget;
-                std::cout << "Enter month (1-12): ";
+                std::cout << std::endl <<center_text("Enter month (1-12): ", terminal_width);
                 std::cin >> month;
-                std::cout << "Enter budget: ";
+                std::cout << center_text("Enter budget: ", terminal_width);
                 std::cin >> budget;
                 writeBudget(username, month, budget);
+                need_menu = 1;
                 break;
             }
             case 3:{
                 printBudgets(username);
+                need_menu = 1;
+                break;
             }
             case 4:
                 std::cout << "Returning to Main Menu..." << std::endl;
@@ -520,16 +574,19 @@ void BudgetManagement::writeGeneralBudget(const std::string& username, double bu
         std::string usr;
         int m;
         double b;
+        int terminal_width, terminal_height;
+        get_terminal_size(terminal_width, terminal_height);
         
         if (iss >> usr >> m >> b) {
             if (usr == username) {
                 entryExists = true;
                 if (toupper(choice) != 'Y') {
-                    std::cout << "Another budget entry for the same username already exists. Do you want to overwrite it? (Y/N): ";
+                    std::cout << center_text("Another budget entry for the same username already exists.\n",terminal_width);
+                    std::cout << center_text("Do you want to overwrite it? (Y/N): ",terminal_width);
                     std::cin >> choice;
                 }
                 if (toupper(choice) != 'Y') {
-                    std::cout << "Operation cancelled." << std::endl;
+                    std::cout << "Operation cancelled..." << std::endl;
                     return;
                 }
             } else {
@@ -548,10 +605,20 @@ void BudgetManagement::writeGeneralBudget(const std::string& username, double bu
         for (int i = 1; i <= 12; ++i) {
             outfile << username << " " << i << " " << budget << std::endl;
         }
-        std::cout << "Budget set successfully!" << std::endl;
+        std::cout << "Budget set successfully! press enter to go back..." << std::endl;
         outfile.close();
+        std::cin.ignore();
+        if (entryExists) {
+            std::cin.ignore();
+            return;
+        }
     } else {
-        std::cout << "Error: Unable to set budget." << std::endl;
+        std::cout << "Error: Unable to set budget! press enter to go back..." << std::endl;
+        std::cin.ignore();
+        if (entryExists) {
+            std::cin.ignore();
+            return;
+        }
     }
 }
 
@@ -561,18 +628,20 @@ void BudgetManagement::writeBudget(const std::string& username, int month, doubl
     
     bool entryExists = false;
     std::string line;
+    int terminal_width, terminal_height;
+    get_terminal_size(terminal_width, terminal_height);
     
     while (getline(infile, line)) {
         std::istringstream iss(line);
         std::string usr;
         int m;
         double b;
-        
         if (iss >> usr >> m >> b) {
             if (usr == username && m == month) {
                 entryExists = true;
                 char choice;
-                std::cout << "Another budget entry for the same username and month already exists. Do you want to overwrite it? (Y/N): ";
+                std::cout << center_text("Another budget entry for the same username already exists.\n",terminal_width);
+                std::cout << center_text("Do you want to overwrite it? (Y/N): ",terminal_width);
                 std::cin >> choice;
                 if (toupper(choice) != 'Y') {
                     std::cout << "Operation cancelled." << std::endl;
@@ -620,6 +689,11 @@ double BudgetManagement::readBudget(const std::string& username, int month) {
 }
 
 void BudgetManagement::printBudgets(const std::string& username){
+    //beauty
+    clear_screen();
+    print_topClock();
+    int printing_height = 12;
+    central_print_prepare_terminal(printing_height);
     std::ifstream infile("budgets.txt");
     double budget = 0.0;
     std::string line;
@@ -635,7 +709,11 @@ void BudgetManagement::printBudgets(const std::string& username){
             }
         }
     }
+    std::cout << "Press Enter to go back..." << std::endl;
+    std::cin.ignore();
+
     infile.close();
+    return;
 }
 
 void ExpenseRevenue::writeExpense(const std::string& username, double amount, int category, const std::string& description, int month) {
@@ -645,7 +723,7 @@ void ExpenseRevenue::writeExpense(const std::string& username, double amount, in
         std::cout << "Expense added successfully!" << std::endl;
         outfile.close();
     } else {
-        std::cout << "Error: Unable to add expense." << std::endl;
+        std::cout << "Error: Unable to add expense..." << std::endl;
     }
 }
 
@@ -664,18 +742,25 @@ void ExpenseRevenue::addExpense(const std::string& username) {
     double amount;
     int category, month;
     std::string description;
-    std::cout << "Enter amount: ";
+    
+    //beauty
+    clear_screen();
+    print_topClock();
+    int printing_height = 11;
+    int terminal_width = central_print_prepare_terminal(printing_height);
+    
+    std::cout << center_text("Enter amount: ",terminal_width);
     std::cin >> amount;
-    std::cout << "Chose one of the following categories: \n";
-    std::cout<<"1. Housing\n";
-    std::cout<<"2. Transportation\n";
-    std::cout<<"3. Food\n";
-    std::cout<<"4. Healthcare\n";
-    std::cout<<"5. Utilities\n";
-    std::cout<<"6. Debt Payments\n";
-        
-    std::cout<<"7. Entertainment\n";
-    std::cout<<"8. Personal Care\n";
+    std::cout << center_text("Chose one of the following categories: \n", terminal_width);
+    std::cout<<center_text("1. Housing\n",terminal_width);
+    std::cout<<center_text("2. Transportation\n",terminal_width);
+    std::cout<<center_text("3. Food\n",terminal_width);
+    std::cout<<center_text("4. Healthcare\n",terminal_width);
+    std::cout<<center_text("5. Utilities\n",terminal_width);
+    std::cout<<center_text("6. Debt Payments\n" ,terminal_width);
+    std::cout<<center_text("7. Entertainment\n",terminal_width);
+    std::cout<<center_text("8. Personal Care\n",terminal_width);
+    std::cout<<center_text("> ",terminal_width);
     std::cin >> category;
 
     if (category>8 || category<0) {
@@ -704,13 +789,20 @@ void ExpenseRevenue::addExpense(const std::string& username) {
 void ExpenseRevenue::addRevenue(const std::string& username) {
     double amount;
     int month;
+
+    //beauty
+    clear_screen();
+    print_topClock();
+    int printing_height = 3;
+    int terminal_width = central_print_prepare_terminal(printing_height);
+
     std::string description;
-    std::cout << "Enter amount: ";
+    std::cout << center_text("Enter amount: ",terminal_width);
     std::cin >> amount;
-    std::cout << "Enter month (1-12): ";
+    std::cout << center_text("Enter month (1-12): ",terminal_width);
     std::cin >> month;
     std::cin.ignore(); 
-    std::cout << "Enter description: ";
+    std::cout << center_text("Enter description: ",terminal_width);
     getline(std::cin, description);
     writeRevenue(username, amount, description, month);
 }
@@ -811,6 +903,10 @@ void MainMenu::dashboard(const std::string& username) {
         if (overspend<0) {overspend = 0;}
         std::cout << month << "\t" << totalRevenue << "\t\t" << totalExpenses << "\t\t" << budget << "\t\t" << profit << "\t\t" << overspend << std::endl;
     }
+    std::cin.ignore();
+    std::cout << "Press Enter to go back..." << std::endl;
+    std::cin.ignore();
+    return;
 }
 
 void Analysis::monthAnalysis(const std::string& username) {
@@ -858,7 +954,12 @@ void writeGoal(const std::string& username, double amount, const std::string& go
 }
 
 void Goals::dashboard_component_Goals(const std::string& username) {
+    // clear scree + setup for space before menu
+    // for each item in menu do the thingy with need_menu.
+    // center print for all, maybe add spaces   
+    clear_screen();
     std::ifstream infile("goals.txt");
+
     if (!infile.is_open()) {
         std::cout << "Error: Unable to open goals file." << std::endl;
         return;
@@ -915,22 +1016,34 @@ void Goals::dashboard_component_Goals(const std::string& username) {
                   << std::setw(15) << std::fixed << std::setprecision(2) << completionPercentage // Display completion percentage with 2 decimal places
                   << std::endl;
     }
+    std::cout << "Press Enter to Go back...";
+    std::cin.ignore();
 }
 
 void Goals::GoalTab(const std::string& username) {
     bool exitGoalTab = false;
+    int need_menu = 0;
+
+    clear_screen();
+    print_topClock();
+    int printing_height = 7;
+    int terminal_width = central_print_prepare_terminal(printing_height);
 
     while (!exitGoalTab) {
         int month, user_goal_choice;
         std::string title;
         double amount, leftA = 0, paidA = 0;
+        if (need_menu) {
+            clear_screen();
+        }
 
-        std::cout << "1. Create Goal\n";
-        std::cout << "2. See Goal/s\n";
-        std::cout << "3. Update Goal\n";
-        std::cout << "4. Delete Goal\n";
-        std::cout << "5. Exit Goal Tab\n";
-
+        std::cout << center_text("Goals Tab\n", terminal_width);
+        std::cout << center_text("1. Create Goal\n", terminal_width);
+        std::cout << center_text("2. See Goal/s\n", terminal_width);
+        std::cout << center_text("3. Update Goal\n",terminal_width);
+        std::cout << center_text("4. Delete Goal\n", terminal_width);
+        std::cout << center_text("5. Exit Goal Tab\n", terminal_width);
+        std::cout << center_text("Enter your choice: ", terminal_width);
         std::cin >> user_goal_choice;
 
         switch (user_goal_choice) {
@@ -944,15 +1057,19 @@ void Goals::GoalTab(const std::string& username) {
                 std::cin >> month;
                 leftA = amount;
                 writeGoal(username, amount, title, month, leftA, paidA);
+                need_menu = 1;
                 break;
             case 2:
                 dashboard_component_Goals(username);
+                need_menu = 1;
                 break;
             case 3:
                 updateGoalTab(username);
+                need_menu = 1;
                 break;
             case 4:
                 deleteGoal(username);
+                need_menu = 1;
                 break;
             case 5:
                 std::cout << "Exiting Goal Tab..." << std::endl;
