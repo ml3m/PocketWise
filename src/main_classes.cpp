@@ -9,110 +9,63 @@
 #include <vector>
 #include <iomanip>
 #include <matplot/matplot.h>
+
 #include "sha256.h"
+
 
 std::unordered_map<std::string, std::string> users;
 
-class UserAuthentication{
-    public:
-        UserAuthentication();
-        void login();
-        void createUser();
-        bool authenticateUser(const std::string& username, const std::string& password, sha256& algorithm);
-    private:
-        std::string username;
-        std::string password;
-};
 
-UserAuthentication::UserAuthentication(){}
+//User Authentication:
+void login();
+void createUser();
+bool authenticateUser(const std::string& username, const std::string& password, sha256& algorithm);
 
-class MainMenu {
-public:
-    MainMenu();
-    void mainMenu(const std::string& username);
-    void dashboard(const std::string& username);
-    void printmenu() const;
-    friend std::ostream& operator<<(std::ostream&, const MainMenu&);
-};
-MainMenu::MainMenu(){}
+//Main Menu and Navigation:
+void mainMenu(const std::string& username);
+void dashboard(const std::string& username);
 
-void MainMenu::printmenu() const {
-    std::cout << "\nMain Menu" << std::endl;
-    std::cout << "1. Budgets Tab" << std::endl;
-    std::cout << "2. Add Expense" << std::endl;
-    std::cout << "3. Add Revenue" << std::endl;
-    std::cout << "4. Goal Tab" << std::endl;
-    std::cout << "5. Investments Tab" << std::endl;
-    std::cout << "6. Dashboard" << std::endl;
-    std::cout << "7. Log Out" << std::endl;
-    std::cout << "8. Quit" << std::endl;
-    std::cout << "Enter your choice: ";
-}
+//Budget Management:
+void budgetsTab(const std::string& username);
+void writeBudget(const std::string& username, int month, double budget);
+void writeGeneralBudget(const std::string& username, double budget);
+double readBudget(const std::string& username, int month);
+void printBudgets(const std::string& username);
 
-std::ostream& operator<<(std::ostream& os, const MainMenu& mymenu) {
-    mymenu.printmenu();
-    return os;
-}
+//Transaction Management:
+void writeTransaction(const std::string& username, int type, double amount, int category, const std::string& description);
+void readTransactions(const std::string& username);
+std::string getCategoryName(int category);
 
-class BudgetManagement{
-    public:
-        BudgetManagement();
-        void budgetsTab(const std::string& username);
-        void writeBudget(const std::string& username, int month, double budget);
-        void writeGeneralBudget(const std::string& username, double budget);
-        double readBudget(const std::string& username, int month);
-        void printBudgets(const std::string& username);
-};
-BudgetManagement::BudgetManagement(){}
+//Expense and Revenue Management:
+void writeExpense(const std::string& username, double amount, int category, const std::string& description, int month);
+void writeRevenue(const std::string& username, double amount, const std::string& description, int month);
+void addExpense(const std::string& username);
+void addRevenue(const std::string& username);
+void readExpenses(const std::string& username);
+void readRevenues(const std::string& username);
 
-class TransactionManagement{
-    public:
-        //Transaction Management:
-        void writeTransaction(const std::string& username, int type, double amount, int category, const std::string& description);
-        void readTransactions(const std::string& username);
-        std::string getCategoryName(int category);
-};
+//Analysis and Visualization:
+void monthAnalysis(const std::string& username);
+void updatePieChart(const std::string& username);
 
-class ExpenseRevenue{
-    public:
-        void writeExpense(const std::string& username, double amount, int category, const std::string& description, int month);
-        void writeRevenue(const std::string& username, double amount, const std::string& description, int month);
-        void addExpense(const std::string& username);
-        void addRevenue(const std::string& username);
-        void readExpenses(const std::string& username);
-        void readRevenues(const std::string& username);
-};
+//Goal Management:
+void GoalTab(const std::string& username);
+void dashboard_component_Goals(const std::string& username);
+void updateGoalTab(const std::string& username);
+void updateGoal(const std::string& username, int goalIndex, double additionalAmount);
+void deleteGoal(const std::string& username);
 
-class Analysis{
-    public:
-        void monthAnalysis(const std::string& username);
-        void updatePieChart(const std::string& username);
-};
+// Investment Tab;
+void investmentTab(const std::string& username);
+void displayInvestments(const std::vector<std::string>& investmentData);
+void investInStock(const std::string& username, double investmentAmount, const std::string& stockName, std::vector<std::string>& investmentData);
+void writeInvestmentData(const std::string& filename, const std::vector<std::string>& data);
+void readInvestmentData(const std::string& filename, std::vector<std::string>& data);
 
-class Goals{
-    public:
-        void GoalTab(const std::string& username);
-        void dashboard_component_Goals(const std::string& username);
-        void updateGoalTab(const std::string& username);
-        void updateGoal(const std::string& username, int goalIndex, double additionalAmount);
-        void deleteGoal(const std::string& username);
-};
-
-class Investments{
-    public:
-        void investmentTab(const std::string& username);
-        void displayInvestments(const std::vector<std::string>& investmentData);
-        void investInStock(const std::string& username, double investmentAmount, const std::string& stockName, std::vector<std::string>& investmentData);
-        void writeInvestmentData(const std::string& filename, const std::vector<std::string>& data);
-        void readInvestmentData(const std::string& filename, std::vector<std::string>& data);
-};
-
-
-/************************* MAIN ******************************/ 
 
 int main() {
     int choice;
-    UserAuthentication loger;
     do {
         std::cout << "1. Login" << std::endl;
         std::cout << "2. Create Account" << std::endl;
@@ -123,10 +76,10 @@ int main() {
 
         switch(choice) {
             case 1:
-                loger.login();
+                login();
                 break;
             case 2:
-                loger.createUser();
+                createUser();
                 break;
             case 3:
                 std::cout << "Exiting..." << std::endl;
@@ -139,7 +92,7 @@ int main() {
     return 0;
 }
 
-void UserAuthentication::createUser() {
+void createUser() {
     std::string username, password;
     std::cout << "Enter username: ";
     std::cin >> username;
@@ -173,7 +126,7 @@ void UserAuthentication::createUser() {
     }
 }
 
-void UserAuthentication::login() {
+void login() {
     std::string username, password;
     std::cout << "Enter username: ";
     std::cin >> username;
@@ -194,11 +147,7 @@ void UserAuthentication::login() {
                 userFound = true;
                 if (hashedPassword == storedHashedPassword) {
                     std::cout << "Login successful!" << std::endl;
-                    this->username = username;
-                    this->password = password;
-                    MainMenu mymenu;
-                    std::cout<<mymenu;
-                    mymenu.mainMenu(username);
+                    mainMenu(username);
                     return;
                 } else {
                     std::cout << "Login failed. Please try again." << std::endl;
@@ -215,7 +164,7 @@ void UserAuthentication::login() {
     }
 }
 
-bool UserAuthentication::authenticateUser(const std::string& username, const std::string& password, sha256& algorithm) {
+bool authenticateUser(const std::string& username, const std::string& password, sha256& algorithm) {
     if (users.find(username) != users.end()) {
         std::string hashedPassword = algorithm.doSha256(password);
         if (hashedPassword == users[username]) {
@@ -254,48 +203,52 @@ std::string getCategoryName(int category) {
     }
 }
 
-void MainMenu::mainMenu(const std::string& username) {
+void mainMenu(const std::string& username) {
     int choice;
     do {
-        // printing from here is in operator <<
+        std::cout << "\nMain Menu" << std::endl;
+        std::cout << "1. Budgets Tab" << std::endl;
+        std::cout << "2. Add Expense" << std::endl;
+        std::cout << "3. Add Revenue" << std::endl;
+        std::cout << "4. Goal Tab" << std::endl;
+        std::cout << "5. Investments Tab" << std::endl;
+        std::cout << "6. Dashboard" << std::endl;
+        std::cout << "7. Log Out" << std::endl;
+        std::cout << "8. Quit" << std::endl;
+        std::cout << "Enter your choice: ";
         std::cin >> choice;
         std::cin.ignore();
-        BudgetManagement mybudget;
-        ExpenseRevenue myEx_Rev;
-        Analysis myanalysis;
-        Goals mygoals;
-        Investments myinvestments;
 
         switch(choice) {
             case 1:
-                mybudget.budgetsTab(username);
+                budgetsTab(username);
                 break;
             case 2:
-                myEx_Rev.addExpense(username);
+                addExpense(username);
                 break;
             case 3:
-                myEx_Rev.addRevenue(username);
+                addRevenue(username);
                 break;
             case 4:
                 std::cout << "Goal Tab" << std::endl;
-                mygoals.GoalTab(username);
+                GoalTab(username);
                 break;
             case 5:
                 std::cout << "Investments Tab" << std::endl;
-                myinvestments.investmentTab(username);
+                investmentTab(username);
                 break;
             case 6:
                 std::cout << "Dashboard" << std::endl;
-                myanalysis.monthAnalysis(username);
+                monthAnalysis(username);
                 dashboard(username);
-                myanalysis.updatePieChart(username);
+                updatePieChart(username);
                 break;
             case 7:
                 std::cout << "Logging out..." << std::endl;
                 break;
             case 8:
                 std::cout << "Exiting..." << std::endl;
-                exit(0); 
+                exit(0); // Exit the program immediately
                 break;
             default:
                 std::cout << "Invalid choice. Please enter again." << std::endl;
@@ -303,7 +256,7 @@ void MainMenu::mainMenu(const std::string& username) {
     } while(choice != 7 && choice != 8);
 }
 
-void BudgetManagement::budgetsTab(const std::string& username) {
+void budgetsTab(const std::string& username) {
     int choice;
     do {
         std::cout << "\nBudgets Tab" << std::endl;
@@ -345,7 +298,7 @@ void BudgetManagement::budgetsTab(const std::string& username) {
 }
 
 
-void BudgetManagement::writeGeneralBudget(const std::string& username, double budget) {
+void writeGeneralBudget(const std::string& username, double budget) {
     std::ifstream infile("budgets.txt");
     std::ofstream tempfile("temp.txt");
     
@@ -393,7 +346,7 @@ void BudgetManagement::writeGeneralBudget(const std::string& username, double bu
     }
 }
 
-void BudgetManagement::writeBudget(const std::string& username, int month, double budget) {
+void writeBudget(const std::string& username, int month, double budget) {
     std::ifstream infile("budgets.txt");
     std::ofstream tempfile("temp.txt");
     
@@ -437,7 +390,7 @@ void BudgetManagement::writeBudget(const std::string& username, int month, doubl
     }
 }
 
-double BudgetManagement::readBudget(const std::string& username, int month) {
+double readBudget(const std::string& username, int month) {
     std::ifstream infile("budgets.txt");
     double budget = 0.0;
     std::string line;
@@ -457,7 +410,7 @@ double BudgetManagement::readBudget(const std::string& username, int month) {
     return budget;
 }
 
-void BudgetManagement::printBudgets(const std::string& username){
+void printBudgets(const std::string& username){
     std::ifstream infile("budgets.txt");
     double budget = 0.0;
     std::string line;
@@ -476,7 +429,7 @@ void BudgetManagement::printBudgets(const std::string& username){
     infile.close();
 }
 
-void ExpenseRevenue::writeExpense(const std::string& username, double amount, int category, const std::string& description, int month) {
+void writeExpense(const std::string& username, double amount, int category, const std::string& description, int month) {
     std::ofstream outfile("expenses.txt", std::ios::app); // Create or open the expenses file
     if (outfile.is_open()) {
         outfile << username << " " << amount << " " << month << " " << category << " " << description << std::endl;
@@ -487,7 +440,7 @@ void ExpenseRevenue::writeExpense(const std::string& username, double amount, in
     }
 }
 
-void ExpenseRevenue::writeRevenue(const std::string& username, double amount, const std::string& description, int month) {
+void writeRevenue(const std::string& username, double amount, const std::string& description, int month) {
     std::ofstream outfile("revenues.txt", std::ios::app); // Create or open the revenues file
     if (outfile.is_open()) {
         outfile << username << " " << amount << " " << month << " " << description << std::endl;
@@ -498,7 +451,7 @@ void ExpenseRevenue::writeRevenue(const std::string& username, double amount, co
     }
 }
 
-void ExpenseRevenue::addExpense(const std::string& username) {
+void addExpense(const std::string& username) {
     double amount;
     int category, month;
     std::string description;
@@ -536,7 +489,7 @@ void ExpenseRevenue::addExpense(const std::string& username) {
     writeExpense(username, amount, category, description, month);
 }
 
-void ExpenseRevenue::addRevenue(const std::string& username) {
+void addRevenue(const std::string& username) {
     double amount;
     int month;
     std::string description;
@@ -550,7 +503,7 @@ void ExpenseRevenue::addRevenue(const std::string& username) {
     writeRevenue(username, amount, description, month);
 }
 
-void ExpenseRevenue::readExpenses(const std::string& username) {
+void readExpenses(const std::string& username) {
     std::ifstream infile("expenses.txt");
     std::string line;
     std::cout << "Expenses for user " << username << ":" << std::endl;
@@ -568,7 +521,7 @@ void ExpenseRevenue::readExpenses(const std::string& username) {
     infile.close();
 }
 
-void ExpenseRevenue::readRevenues(const std::string& username) {
+void readRevenues(const std::string& username) {
     std::ifstream infile("revenues.txt");
     std::string line;
     std::cout << "Revenues for user " << username << ":" << std::endl;
@@ -586,7 +539,7 @@ void ExpenseRevenue::readRevenues(const std::string& username) {
     infile.close();
 }
 
-void MainMenu::dashboard(const std::string& username) {
+void dashboard(const std::string& username) {
     std::ifstream revenuesFile("revenues.txt");
     std::unordered_map<int, double> revenuesPerMonth;
     std::string line;
@@ -648,7 +601,7 @@ void MainMenu::dashboard(const std::string& username) {
     }
 }
 
-void Analysis::monthAnalysis(const std::string& username) {
+void monthAnalysis(const std::string& username) {
     int month;
     std::cout << "Enter month (1-12): ";
     std::cin >> month;
@@ -692,7 +645,7 @@ void writeGoal(const std::string& username, double amount, const std::string& go
     }
 }
 
-void Goals::dashboard_component_Goals(const std::string& username) {
+void dashboard_component_Goals(const std::string& username) {
     std::ifstream infile("goals.txt");
     if (!infile.is_open()) {
         std::cout << "Error: Unable to open goals file." << std::endl;
@@ -752,7 +705,7 @@ void Goals::dashboard_component_Goals(const std::string& username) {
     }
 }
 
-void Goals::GoalTab(const std::string& username) {
+void GoalTab(const std::string& username) {
     bool exitGoalTab = false;
 
     while (!exitGoalTab) {
@@ -800,7 +753,7 @@ void Goals::GoalTab(const std::string& username) {
 }
 
 
-void Goals::updateGoal(const std::string& username, int goalIndex, double additionalAmount) {
+void updateGoal(const std::string& username, int goalIndex, double additionalAmount) {
     std::ifstream infile("goals.txt");
     if (!infile.is_open()) {
         std::cout << "Error: Unable to open goals file." << std::endl;
@@ -852,7 +805,7 @@ void Goals::updateGoal(const std::string& username, int goalIndex, double additi
     }
 }
 
-void Goals::updateGoalTab(const std::string& username) {
+void updateGoalTab(const std::string& username) {
     dashboard_component_Goals(username);
     std::cout << "goals are numbered starting from 1.\n";
 
@@ -868,7 +821,7 @@ void Goals::updateGoalTab(const std::string& username) {
 }
 
 
-void Goals::deleteGoal(const std::string& username) {
+void deleteGoal(const std::string& username) {
     dashboard_component_Goals(username);
     std::cout << "Goals are numbered starting from 1." << std::endl;
 
@@ -911,7 +864,7 @@ void Goals::deleteGoal(const std::string& username) {
 
 
 
-void Investments::readInvestmentData(const std::string& filename, std::vector<std::string>& data) {
+void readInvestmentData(const std::string& filename, std::vector<std::string>& data) {
     std::ifstream infile(filename);
     if (!infile.is_open()) {
         std::cerr << "Error: Unable to open file " << filename << std::endl;
@@ -926,7 +879,7 @@ void Investments::readInvestmentData(const std::string& filename, std::vector<st
     infile.close();
 }
 
-void Investments::writeInvestmentData(const std::string& filename, const std::vector<std::string>& data) {
+void writeInvestmentData(const std::string& filename, const std::vector<std::string>& data) {
     std::ofstream outfile(filename);
     if (!outfile.is_open()) {
         std::cerr << "Error: Unable to open file " << filename << " for writing" << std::endl;
@@ -942,7 +895,7 @@ void Investments::writeInvestmentData(const std::string& filename, const std::ve
 
 // Investment Functions
 
-void Investments::investInStock(const std::string& username, double investmentAmount, const std::string& stockName, std::vector<std::string>& investmentData) {
+void investInStock(const std::string& username, double investmentAmount, const std::string& stockName, std::vector<std::string>& investmentData) {
     // Code for investing in a stock
     // You can add more functionality here, such as updating user's investment portfolio, etc.
     std::string investmentRecord = username + " " + std::to_string(investmentAmount) + " " + stockName;
@@ -950,7 +903,7 @@ void Investments::investInStock(const std::string& username, double investmentAm
     std::cout << "Invested $" << investmentAmount << " in " << stockName << std::endl;
 }
 
-void Investments::displayInvestments(const std::vector<std::string>& investmentData) {
+void displayInvestments(const std::vector<std::string>& investmentData) {
     std::cout << "Investment History:" << std::endl;
     std::cout << std::setw(15) << "Username"
               << std::setw(15) << "Amount"
@@ -969,7 +922,7 @@ void Investments::displayInvestments(const std::vector<std::string>& investmentD
 
 // Investment Tab Function
 
-void Investments::investmentTab(const std::string& username) {
+void investmentTab(const std::string& username) {
     std::vector<std::string> investmentData;
     readInvestmentData("investment_data.txt", investmentData);
 
@@ -1011,7 +964,7 @@ void Investments::investmentTab(const std::string& username) {
 }
 
 
-void Analysis::updatePieChart(const std::string& username) {
+void updatePieChart(const std::string& username) {
     std::vector<double> amounts;
     std::vector<std::string> categories;
 
