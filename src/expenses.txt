@@ -6,3 +6,7 @@ loredanaifju 10 4 3 I bought some icescreem
 loredanaifju 2000 4 8 party
 mlem 10 4 3 burgir
 mlem 100000 123 6 1231
+mlem 70 3 3 bread
+mlem 80 3 4 pills
+mlem 30 2 7 netflix
+mlem 23 2 1 cea

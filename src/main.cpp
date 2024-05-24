@@ -2,6 +2,7 @@
 #include <ios>
 #include <iostream>
 #include <fstream>
+#include <matplot/axes_objects/labels.h>
 #include <ostream>
 #include <string>
 #include <cstdio>
@@ -10,8 +11,47 @@
 #include <iomanip>
 #include <matplot/matplot.h>
 #include "sha256.h"
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <unistd.h>
 
 std::unordered_map<std::string, std::string> users;
+
+std::string get_password() {
+    // Disable echoing
+    termios old_term, new_term;
+    tcgetattr(STDIN_FILENO, &old_term);
+    new_term = old_term;
+    new_term.c_lflag &= ~ECHO;
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
+
+    // Read password
+    std::string password;
+    std::cin >> password;
+
+    // Restore terminal settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &old_term);
+
+    return password;
+}
+// Function to get the dimensions of the terminal
+void get_terminal_size(int &width, int &height) {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    width = w.ws_col;
+    height = w.ws_row;
+}
+
+// Function to center text horizontally
+std::string center_text(const std::string &text, int width) {
+    int pad = (width - text.size()) / 2;
+    return std::string(pad, ' ') + text;
+}
+
+// Function to clear the screen
+void clear_screen() {
+    std::cout << "\033[2J\033[1;1H";
+}
 
 class UserAuthentication{
     public:
@@ -37,16 +77,32 @@ public:
 MainMenu::MainMenu(){}
 
 void MainMenu::printmenu() const {
-    std::cout << "\nMain Menu" << std::endl;
-    std::cout << "1. Budgets Tab" << std::endl;
-    std::cout << "2. Add Expense" << std::endl;
-    std::cout << "3. Add Revenue" << std::endl;
-    std::cout << "4. Goal Tab" << std::endl;
-    std::cout << "5. Investments Tab" << std::endl;
-    std::cout << "6. Dashboard" << std::endl;
-    std::cout << "7. Log Out" << std::endl;
-    std::cout << "8. Quit" << std::endl;
-    std::cout << "Enter your choice: ";
+
+    int terminal_width, terminal_height;
+    get_terminal_size(terminal_width, terminal_height);
+
+    clear_screen();
+
+    int menu_height = 10; // Number of lines in the menu
+
+    // Calculate the vertical positions
+    int half_height = terminal_height / 2;
+
+    for (int i = 0; i < half_height - menu_height/2; ++i) {
+        std::cout << std::endl;
+    }
+
+    std::cout << center_text("Main Menu\n"        , terminal_width);
+    std::cout << center_text("1. Budgets Tab\n"     , terminal_width);
+    std::cout << center_text("2. Add Expense\n"     , terminal_width);
+    std::cout << center_text("3. Add Revenue\n"     , terminal_width);
+    std::cout << center_text("4. Goal Tab\n"        , terminal_width);
+    std::cout << center_text("5. Investments Tab\n" , terminal_width);
+    std::cout << center_text("6. Dashboard\n"       , terminal_width);
+    std::cout << center_text("7. Log Out\n"         , terminal_width);
+    std::cout << center_text("8. Quit\n"            , terminal_width);
+    std::cout << center_text("Enter your choice: ", terminal_width);
+
 }
 
 std::ostream& operator<<(std::ostream& os, const MainMenu& mymenu) {
@@ -111,13 +167,71 @@ class Investments{
 /************************* MAIN ******************************/ 
 
 int main() {
+
     int choice;
     UserAuthentication loger;
     do {
-        std::cout << "1. Login" << std::endl;
-        std::cout << "2. Create Account" << std::endl;
-        std::cout << "3. Quit" << std::endl;
-        std::cout << "Enter your choice: ";
+    int terminal_width, terminal_height;
+    get_terminal_size(terminal_width, terminal_height);
+
+    // Clear the screen
+    clear_screen();
+
+    // ASCII art
+    std::string art[] = {
+        " ____            _        _ __        ___          ",
+        "|  _ \\ ___   ___| | _____| |\\ \\      / (_)___  ___ ",
+        "| |_) / _ \\ / __| |/ / _ \\ __\\ \\ /\\ / /| / __|/ _ \\",
+        "|  __/ (_) | (__|   <  __/ |_ \\ V  V / | \\__ \\  __/",
+        "|_|   \\___/ \\___|_|\\_\\___|\\__| \\_/\\_/  |_|___/\\___|"
+    };
+
+    // Menu options
+    std::string login = "1. Login";
+    std::string create_account = "2. Create Account";
+    std::string quit = "3. Quit";
+    std::string enter_choice = "Enter your choice: ";
+
+    // Center each line of the ASCII art horizontally
+    for (std::string &line : art) {
+        line = center_text(line, terminal_width);
+    }
+
+    // Center each line of the menu horizontally
+    login = center_text(login, terminal_width);
+    create_account = center_text(create_account, terminal_width);
+    quit = center_text(quit, terminal_width);
+    enter_choice = center_text(enter_choice, terminal_width);
+
+    // Calculate the total number of lines in the ASCII art and menu
+    int art_height = sizeof(art) / sizeof(art[0]);
+    int menu_height = 4; // Number of lines in the menu
+
+    // Calculate the vertical positions
+    int half_height = terminal_height / 2;
+    int art_start = half_height - (art_height / 2 + menu_height + 1); // Add extra space between the art and the menu
+    int menu_start = art_start + art_height + 2; // Add extra space between the art and the menu
+
+    // Print blank lines to position the ASCII art
+    for (int i = 0; i < art_start; ++i) {
+        std::cout << std::endl;
+    }
+
+    // Print the ASCII art
+    for (const std::string &line : art) {
+        std::cout << line << std::endl;
+    }
+
+    // Print blank lines to position the menu
+    for (int i = art_start + art_height; i < menu_start; ++i) {
+        std::cout << std::endl;
+    }
+
+    // Print the centered menu
+    std::cout << login << std::endl;
+    std::cout << create_account << std::endl;
+    std::cout << quit << std::endl;
+    std::cout << enter_choice;
         std::cin >> choice;
         std::cin.ignore();
 
@@ -141,22 +255,38 @@ int main() {
 
 void UserAuthentication::createUser() {
     std::string username, password;
-    std::cout << "Enter username: ";
+    int terminal_width, terminal_height;
+    get_terminal_size(terminal_width, terminal_height);
+
+    clear_screen();
+
+    int menu_height = 3; 
+
+    int half_height = terminal_height / 2;
+
+    for (int i = 0; i < half_height - menu_height/2; ++i) {
+        std::cout << std::endl;
+    }
+
+    std::cout << center_text("Enter username: ", terminal_width);
     std::cin >> username;
 
     std::ifstream infile("users.txt");
     std::string storedUsername;
     while (infile >> storedUsername) {
         if (storedUsername == username) {
-            std::cout << "Username already exists. Please choose a different one." << std::endl;
+            std::cout << center_text("Username already exists. Please choose a different one.\n", terminal_width);
             infile.close();
+            std::cout << center_text("Press Enter to continue...\n", terminal_width);
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore any remaining input
+            std::cin.get(); // Wait for Enter key press
             return;
         }
     }
     infile.close();
 
-    std::cout << "Enter password: ";
-    std::cin >> password;
+    std::cout << center_text("Enter password: ", terminal_width);
+    password = get_password();
 
     std::string small_salt = "mlematikus";
     password += small_salt; // salt aplication
@@ -174,11 +304,24 @@ void UserAuthentication::createUser() {
 }
 
 void UserAuthentication::login() {
-    std::string username, password;
-    std::cout << "Enter username: ";
+    int terminal_width, terminal_height;
+    get_terminal_size(terminal_width, terminal_height);
+    int menu_height = 2; 
+    int half_height = terminal_height / 2;
+    
+    clear_screen();
+
+    for (int i = 0; i < half_height - menu_height; ++i) {
+        std::cout << std::endl;
+    }
+
+    std::cout << center_text("Enter username: ", terminal_width);
+    std::string username;
     std::cin >> username;
-    std::cout << "Enter password: ";
-    std::cin >> password;
+
+    std::cout << center_text("Enter password: ", terminal_width);
+    std::string password = get_password();
+    std::cout << std::endl; 
 
     std::string small_salt = "mlematikus";
     sha256 algorithm;
@@ -256,6 +399,7 @@ std::string getCategoryName(int category) {
 
 void MainMenu::mainMenu(const std::string& username) {
     int choice;
+    int need_menu = 0;
     do {
         // printing from here is in operator <<
         std::cin >> choice;
@@ -266,29 +410,43 @@ void MainMenu::mainMenu(const std::string& username) {
         Goals mygoals;
         Investments myinvestments;
 
+        if (need_menu) {printmenu();}
         switch(choice) {
+
             case 1:
+                clear_screen();
                 mybudget.budgetsTab(username);
+                need_menu = 1;
                 break;
             case 2:
+                clear_screen();
                 myEx_Rev.addExpense(username);
+                need_menu = 1;
                 break;
             case 3:
+                clear_screen();
                 myEx_Rev.addRevenue(username);
+                need_menu = 1;
                 break;
             case 4:
+                clear_screen();
                 std::cout << "Goal Tab" << std::endl;
                 mygoals.GoalTab(username);
+                need_menu = 1;
                 break;
             case 5:
+                clear_screen();
                 std::cout << "Investments Tab" << std::endl;
                 myinvestments.investmentTab(username);
+                need_menu = 1;
                 break;
             case 6:
+                clear_screen();
                 std::cout << "Dashboard" << std::endl;
                 myanalysis.monthAnalysis(username);
                 dashboard(username);
-                myanalysis.updatePieChart(username);
+                //myanalysis.updatePieChart(username);
+                need_menu = 1;
                 break;
             case 7:
                 std::cout << "Logging out..." << std::endl;
@@ -511,6 +669,7 @@ void ExpenseRevenue::addExpense(const std::string& username) {
     std::cout<<"4. Healthcare\n";
     std::cout<<"5. Utilities\n";
     std::cout<<"6. Debt Payments\n";
+        
     std::cout<<"7. Entertainment\n";
     std::cout<<"8. Personal Care\n";
     std::cin >> category;
@@ -534,6 +693,8 @@ void ExpenseRevenue::addExpense(const std::string& username) {
     std::cout << "Enter description: ";
     getline(std::cin, description);
     writeExpense(username, amount, category, description, month);
+    std::cout<< "successfully added expense...";
+    return;
 }
 
 void ExpenseRevenue::addRevenue(const std::string& username) {
