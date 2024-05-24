@@ -10,3 +10,7 @@ mlem 70 3 3 bread
 mlem 80 3 4 pills
 mlem 30 2 7 netflix
 mlem 23 2 1 cea
+mlem 600 5 1 hotel
+mlem 499 3 5 gas
+mlem 120 5 4 fishOil
+mlem 15 5 3 brutarie

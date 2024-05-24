@@ -1,19 +1,19 @@
-#include <cctype>
-#include <ios>
-#include <iostream>
-#include <fstream>
 #include <matplot/axes_objects/labels.h>
-#include <ostream>
-#include <string>
-#include <cstdio>
-#include <unordered_map>
-#include <vector>
-#include <iomanip>
 #include <matplot/matplot.h>
-#include "sha256.h"
+#include <unordered_map>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
+#include <iostream>
+#include <fstream>
+#include <ostream>
+#include <iomanip>
+#include <cctype>
+#include <string>
+#include <cstdio>
+#include <vector>
+#include <ios>
+#include "sha256.h"
 
 std::unordered_map<std::string, std::string> users;
 
@@ -25,7 +25,6 @@ std::string get_password() {
     new_term.c_lflag &= ~ECHO;
     tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
 
-    // Read password
     std::string password;
     std::cin >> password;
 
@@ -409,19 +408,24 @@ void MainMenu::mainMenu(const std::string& username) {
         Analysis myanalysis;
         Goals mygoals;
         Investments myinvestments;
+        MainMenu repeating_menu;
 
-        if (need_menu) {printmenu();}
+        if (need_menu) {
+            std::cout << repeating_menu;
+        }
         switch(choice) {
 
             case 1:
                 clear_screen();
                 mybudget.budgetsTab(username);
                 need_menu = 1;
+                printmenu();
                 break;
             case 2:
                 clear_screen();
                 myEx_Rev.addExpense(username);
                 need_menu = 1;
+                printmenu();
                 break;
             case 3:
                 clear_screen();
@@ -693,8 +697,8 @@ void ExpenseRevenue::addExpense(const std::string& username) {
     std::cout << "Enter description: ";
     getline(std::cin, description);
     writeExpense(username, amount, category, description, month);
-    std::cout<< "successfully added expense...";
-    return;
+    std::cout<< "successfully added expense...\n";
+    clear_screen();
 }
 
 void ExpenseRevenue::addRevenue(const std::string& username) {
