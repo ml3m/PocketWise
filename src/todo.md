@@ -21,6 +21,10 @@ Revenue ok
 
 CreateGoal No
 
+    BUG2:
+
+    View Goals dosn't print in the center and doesn't clean screen ...
+
 void Goals::dashboard_component_Goals(const std::string& username) {
     // clear scree + setup for space before menu
     // for each item in menu do the thingy with need_menu.

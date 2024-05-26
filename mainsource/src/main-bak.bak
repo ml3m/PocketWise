@@ -16,7 +16,8 @@
 #include <chrono>
 #include <ctime>
 
-#include "sha256.h"
+#include "../include/sha256.h"
+
 
 std::unordered_map<std::string, std::string> users;
 void print_topClock();
@@ -310,7 +311,7 @@ void UserAuthentication::createUser() {
     std::cout << center_text("Enter username: ", terminal_width);
     std::cin >> username;
 
-    std::ifstream infile("users.txt");
+    std::ifstream infile("data/users.txt");
     std::string storedUsername;
     while (infile >> storedUsername) {
         if (storedUsername == username) {
@@ -329,7 +330,7 @@ void UserAuthentication::createUser() {
 
     std::string small_salt = "mlematikus";
     password += small_salt; // salt aplication
-    std::ofstream outfile("users.txt", std::ios::app);
+    std::ofstream outfile("data/users.txt", std::ios::app);
     if (outfile.is_open()) {
         sha256 algorithm;
         std::string hashPassword = algorithm.doSha256(password);
@@ -370,7 +371,7 @@ void UserAuthentication::login() {
     password += small_salt; //salt aplication
     std::string hashedPassword = algorithm.doSha256(password);
 
-    std::ifstream infile("users.txt");
+    std::ifstream infile("data/users.txt");
     if (infile.is_open()) {
         std::string storedUsername, storedHashedPassword;
         bool userFound = false;
@@ -562,8 +563,8 @@ void BudgetManagement::budgetsTab(const std::string& username) {
 
 
 void BudgetManagement::writeGeneralBudget(const std::string& username, double budget) {
-    std::ifstream infile("budgets.txt");
-    std::ofstream tempfile("temp.txt");
+    std::ifstream infile("data/budgets.txt");
+    std::ofstream tempfile("data/temp.txt");
     
     bool entryExists = false;
     std::string line;
@@ -597,10 +598,10 @@ void BudgetManagement::writeGeneralBudget(const std::string& username, double bu
     infile.close();
     tempfile.close();
     
-    remove("budgets.txt");
-    rename("temp.txt", "budgets.txt");
+    remove("data/budgets.txt");
+    rename("data/temp.txt", "data/budgets.txt");
     
-    std::ofstream outfile("budgets.txt", std::ios::app);
+    std::ofstream outfile("data/budgets.txt", std::ios::app);
     if (outfile.is_open()) {
         for (int i = 1; i <= 12; ++i) {
             outfile << username << " " << i << " " << budget << std::endl;
@@ -623,8 +624,8 @@ void BudgetManagement::writeGeneralBudget(const std::string& username, double bu
 }
 
 void BudgetManagement::writeBudget(const std::string& username, int month, double budget) {
-    std::ifstream infile("budgets.txt");
-    std::ofstream tempfile("temp.txt");
+    std::ifstream infile("data/budgets.txt");
+    std::ofstream tempfile("data/temp.txt");
     
     bool entryExists = false;
     std::string line;
@@ -655,10 +656,10 @@ void BudgetManagement::writeBudget(const std::string& username, int month, doubl
     infile.close();
     tempfile.close();
     
-    remove("budgets.txt");
-    rename("temp.txt", "budgets.txt");
+    remove("data/budgets.txt");
+    rename("data/temp.txt", "data/budgets.txt");
     
-    std::ofstream outfile("budgets.txt", std::ios::app);
+    std::ofstream outfile("data/budgets.txt", std::ios::app);
     if (outfile.is_open()) {
         outfile << username << " " << month << " " << budget << std::endl;
         std::cout << "Budget set successfully!" << std::endl;
@@ -669,7 +670,7 @@ void BudgetManagement::writeBudget(const std::string& username, int month, doubl
 }
 
 double BudgetManagement::readBudget(const std::string& username, int month) {
-    std::ifstream infile("budgets.txt");
+    std::ifstream infile("data/budgets.txt");
     double budget = 0.0;
     std::string line;
     while (getline(infile, line)) {
@@ -694,7 +695,7 @@ void BudgetManagement::printBudgets(const std::string& username){
     print_topClock();
     int printing_height = 12;
     central_print_prepare_terminal(printing_height);
-    std::ifstream infile("budgets.txt");
+    std::ifstream infile("data/budgets.txt");
     double budget = 0.0;
     std::string line;
     std::cout<<"\t\tuser: mlem\t"<<"month\t"<<"budget\t"<<std::endl;
@@ -717,7 +718,7 @@ void BudgetManagement::printBudgets(const std::string& username){
 }
 
 void ExpenseRevenue::writeExpense(const std::string& username, double amount, int category, const std::string& description, int month) {
-    std::ofstream outfile("expenses.txt", std::ios::app); // Create or open the expenses file
+    std::ofstream outfile("data/expenses.txt", std::ios::app); // Create or open the expenses file
     if (outfile.is_open()) {
         outfile << username << " " << amount << " " << month << " " << category << " " << description << std::endl;
         std::cout << "Expense added successfully!" << std::endl;
@@ -728,7 +729,7 @@ void ExpenseRevenue::writeExpense(const std::string& username, double amount, in
 }
 
 void ExpenseRevenue::writeRevenue(const std::string& username, double amount, const std::string& description, int month) {
-    std::ofstream outfile("revenues.txt", std::ios::app); // Create or open the revenues file
+    std::ofstream outfile("data/revenues.txt", std::ios::app); // Create or open the revenues file
     if (outfile.is_open()) {
         outfile << username << " " << amount << " " << month << " " << description << std::endl;
         std::cout << "Revenue added successfully!" << std::endl;
@@ -808,7 +809,7 @@ void ExpenseRevenue::addRevenue(const std::string& username) {
 }
 
 void ExpenseRevenue::readExpenses(const std::string& username) {
-    std::ifstream infile("expenses.txt");
+    std::ifstream infile("data/expenses.txt");
     std::string line;
     std::cout << "Expenses for user " << username << ":" << std::endl;
     while (getline(infile, line)) {
@@ -826,7 +827,7 @@ void ExpenseRevenue::readExpenses(const std::string& username) {
 }
 
 void ExpenseRevenue::readRevenues(const std::string& username) {
-    std::ifstream infile("revenues.txt");
+    std::ifstream infile("data/revenues.txt");
     std::string line;
     std::cout << "Revenues for user " << username << ":" << std::endl;
     while (getline(infile, line)) {
@@ -844,7 +845,7 @@ void ExpenseRevenue::readRevenues(const std::string& username) {
 }
 
 void MainMenu::dashboard(const std::string& username) {
-    std::ifstream revenuesFile("revenues.txt");
+    std::ifstream revenuesFile("data/revenues.txt");
     std::unordered_map<int, double> revenuesPerMonth;
     std::string line;
     while (getline(revenuesFile, line)) {
@@ -860,7 +861,7 @@ void MainMenu::dashboard(const std::string& username) {
     }
     revenuesFile.close();
 
-    std::ifstream expensesFile("expenses.txt");
+    std::ifstream expensesFile("data/expenses.txt");
     std::unordered_map<int, double> expensesPerMonth; 
     while (getline(expensesFile, line)) {
         std::istringstream iss(line);
@@ -876,7 +877,7 @@ void MainMenu::dashboard(const std::string& username) {
     }
     expensesFile.close();
 
-    std::ifstream budgetsFile("budgets.txt");
+    std::ifstream budgetsFile("data/budgets.txt");
     std::unordered_map<int, double> budgetsPerMonth; // Month -> Budget
     while (getline(budgetsFile, line)) {
         std::istringstream iss(line);
@@ -919,7 +920,7 @@ void Analysis::monthAnalysis(const std::string& username) {
         return;
     }
 
-    std::ifstream expensesFile("expenses.txt");
+    std::ifstream expensesFile("data/expenses.txt");
     std::string line;
     bool foundExpenses = false;
     std::cout << "Expenses for user " << username << " in month " << month << ":" << std::endl;
@@ -943,7 +944,7 @@ void Analysis::monthAnalysis(const std::string& username) {
 }
 
 void writeGoal(const std::string& username, double amount, const std::string& goalTitle, int month, double amountLeft, double amountPaid) {
-    std::ofstream outfile("goals.txt", std::ios::app); // Create or open the expenses file
+    std::ofstream outfile("data/goals.txt", std::ios::app); // Create or open the expenses file
     if (outfile.is_open()) {
         outfile << username << " " << amount << " " << amountLeft << " " << amountPaid << " " << month << " " << goalTitle <<std::endl;
         std::cout << "Goal '" <<goalTitle << "' added successfully!" << std::endl;
@@ -958,7 +959,7 @@ void Goals::dashboard_component_Goals(const std::string& username) {
     // for each item in menu do the thingy with need_menu.
     // center print for all, maybe add spaces   
     clear_screen();
-    std::ifstream infile("goals.txt");
+    std::ifstream infile("data/goals.txt");
 
     if (!infile.is_open()) {
         std::cout << "Error: Unable to open goals file." << std::endl;
@@ -1083,7 +1084,7 @@ void Goals::GoalTab(const std::string& username) {
 
 
 void Goals::updateGoal(const std::string& username, int goalIndex, double additionalAmount) {
-    std::ifstream infile("goals.txt");
+    std::ifstream infile("data/goals.txt");
     if (!infile.is_open()) {
         std::cout << "Error: Unable to open goals file." << std::endl;
         return;
@@ -1117,7 +1118,7 @@ void Goals::updateGoal(const std::string& username, int goalIndex, double additi
 
     goals[goalIndex - 1] = oss.str();
 
-    std::ofstream outfile("goals.txt");
+    std::ofstream outfile("data/goals.txt");
     if (outfile.is_open()) {
         for (const auto& goal : goals) {
             outfile << goal << std::endl;
@@ -1158,7 +1159,7 @@ void Goals::deleteGoal(const std::string& username) {
     std::cout << "Enter the number of the goal you want to delete: ";
     std::cin >> goalIndex;
 
-    std::ifstream infile("goals.txt");
+    std::ifstream infile("data/goals.txt");
     if (!infile.is_open()) {
         std::cout << "Error: Unable to open goals file." << std::endl;
         return;
@@ -1178,7 +1179,7 @@ void Goals::deleteGoal(const std::string& username) {
 
     goals.erase(goals.begin() + goalIndex - 1);
 
-    std::ofstream outfile("goals.txt");
+    std::ofstream outfile("data/goals.txt");
     if (outfile.is_open()) {
         for (const auto& goal : goals) {
             outfile << goal << std::endl;
@@ -1253,7 +1254,7 @@ void Investments::displayInvestments(const std::vector<std::string>& investmentD
 
 void Investments::investmentTab(const std::string& username) {
     std::vector<std::string> investmentData;
-    readInvestmentData("investment_data.txt", investmentData);
+    readInvestmentData("data/investment_data.txt", investmentData);
 
     bool exitInvestmentTab = false;
     while (!exitInvestmentTab) {
@@ -1289,7 +1290,7 @@ void Investments::investmentTab(const std::string& username) {
         }
     }
 
-    writeInvestmentData("investment_data.txt", investmentData);
+    writeInvestmentData("data/investment_data.txt", investmentData);
 }
 
 
@@ -1297,7 +1298,7 @@ void Analysis::updatePieChart(const std::string& username) {
     std::vector<double> amounts;
     std::vector<std::string> categories;
 
-    std::ifstream expensesFile("expenses.txt");
+    std::ifstream expensesFile("data/expenses.txt");
     if (!expensesFile.is_open()) {
         std::cout << "Error: Unable to open expenses file." << std::endl;
         return;

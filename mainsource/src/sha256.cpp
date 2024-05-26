@@ -1,5 +1,4 @@
-#include "sha256.h"
-#include <iostream>
+#include "../include/sha256.h"
 #include <string>
 #include <bitset>
 #include <math.h>
