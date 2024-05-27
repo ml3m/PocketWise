@@ -10,5 +10,6 @@ int central_print_prepare_terminal(int printing_height);
 void print_topClock();
 std::string getCurrentTimeAndDay();
 std::string get_password();
+void print_topName(const std::string username);
 
 #endif // TERMINAL_UTILS_H

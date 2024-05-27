@@ -7,7 +7,7 @@ LDFLAGS = -lmatplot
 SRCS = src/main.cpp \
        src/BudgetManagement.cpp \
        src/ExpenseRevenue.cpp \
-       src/Investments.cpp \
+       src/Stocks.cpp \
        src/MainMenu.cpp \
        src/UserAuthentication.cpp \
        src/Analysis.cpp \

@@ -3,10 +3,11 @@
 #include "../include/Goals.h"
 #include "../include/Analysis.h"
 #include "../include/MainMenu.h"
-#include "../include/Investments.h"
 #include "../include/ExpenseRevenue.h"
 #include "../include/BudgetManagement.h"
 #include "../include/terminal_utils.h"
+#include "../include/Stocks.h"
+#include <string>
 
 MainMenu::MainMenu(){}
 
@@ -72,6 +73,10 @@ void MainMenu::mainMenu(const std::string& username) {
                 std::cout << "Invalid choice. Please enter again." << std::endl;
         }
     } while(choice != 7 && choice != 8);
+}
+
+void MainMenu::set_menu_username(const std::string& username){
+    this->username = username;
 }
 
 void MainMenu::printmenu() const {

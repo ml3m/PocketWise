@@ -93,6 +93,7 @@ void UserAuthentication::login() {
                     this->username = username;
                     this->password = password;
                     MainMenu mymenu;
+                    mymenu.set_menu_username(username);
                     clear_screen();
                     std::cout<<mymenu;
                     mymenu.mainMenu(username);

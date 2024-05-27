@@ -21,3 +21,6 @@ mlem 50 12 1 matt
 mlem 600 8 1 doghouse
 a 80 1 8 massage
 a 789 10 4 seringa
+mlem 120 9 2 BusTickey
+mlem 500 9 1 money?
+andrei 200 5 3 pasta
