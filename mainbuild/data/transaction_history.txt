@@ -16,3 +16,8 @@ mlem NFLX 60 531.585 buy
 mlem NFLX 50 850.536 sell
 mlem GOOGL 10 2003.12 sell
 mlem NFLX 10 726.5 sell
+a GOOGL 5 142.751 sell
+a AAPL 2 167.776 buy
+a AAPL 2 178.752 sell
+mlem NFLX 5 545.761 sell
+mlem FB 6 362.147 buy

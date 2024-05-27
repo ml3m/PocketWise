@@ -83,7 +83,8 @@ void Investments::loadAvailableStocks() {
     };
 
     for (auto& stock : availableStocks) {
-        double percentageChange = ((std::rand() % 101) - 50) / 100.0;
+        double percentageChange = ((std::rand() % 201) - 100) / 1000.0; // Change range from -10% to +10%
+      //double percentageChange = ((std::rand() % 101) - 50) / 100.0;   // Crange range from -50% to +50%
         //stock.price += stock.price * percentageChange;
         stock.price *= (1 + percentageChange);
     }
