@@ -6,3 +6,9 @@ mlem 8000 5 hehe
 a 900 1 betting
 a 900 11 trading
 mlem 800 9 soldFruits
+mlem 43.904 5 Profit from selling AAPL
+mlem 12978 12 Profit from selling GOOGL
+mlem 62.72 11 Profit from selling GOOGL
+mlem 303.796 5 Profit from selling TSLA
+mlem 5642.6 5 Profit from selling GOOGL
+mlem 15947.5 7 Profit from selling NFLX

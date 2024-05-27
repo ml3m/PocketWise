@@ -1,4 +1,4 @@
-Bug1: when doing 6. Dashboard the Revenues on that specific selected month are not printed. 
+SOLVED: Bug1: when doing 6. Dashboard the Revenues on that specific selected month are not printed. 
     idea: make it print expenses then \n and then print revenues the same as expenses were printed 
 
 Bug2: Goals Tab when doing 2. See Goal/s the printing gets real bad.
@@ -11,6 +11,7 @@ Bug3: Doing from the mainMenu 5. Investments Tab the screen is not cleared and
 Bug4: When investing again in a already present stock instead of updating the quantity for that stock,
     another stock is created....
 
+<<<Implemented not really tested, but pretty much working as expected>>>
 Missing Functionality: create velocity in the price of the stock, have stock prices 
         and the user can have a number of stocks (float) of a quantity of money 
         1. each stock should be bought in shares.

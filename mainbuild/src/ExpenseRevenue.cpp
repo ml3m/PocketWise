@@ -1,6 +1,7 @@
 #include "../include/precompiled.h"
 #include "../include/ExpenseRevenue.h"
 #include "../include/terminal_utils.h"
+#include <iostream>
 
 void ExpenseRevenue::writeExpense(const std::string& username, double amount, int category, const std::string& description, int month) {
     std::ofstream outfile("data/expenses.txt", std::ios::app); // Create or open the expenses file
@@ -108,6 +109,7 @@ void ExpenseRevenue::readExpenses(const std::string& username) {
             }
         }
     }
+    std::cout << std::endl;
     infile.close();
 }
 
@@ -126,6 +128,7 @@ void ExpenseRevenue::readRevenues(const std::string& username) {
             }
         }
     }
+    std::cout << std::endl;
     infile.close();
 }
 

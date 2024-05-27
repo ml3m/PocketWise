@@ -24,3 +24,11 @@ a 789 10 4 seringa
 mlem 120 9 2 BusTickey
 mlem 500 9 1 money?
 andrei 200 5 3 pasta
+mlem 8886.03 12 0 Investment in TSLA
+mlem 1291.13 12 0 Loss from selling TSLA
+mlem 9072.38 2 0 Investment in NFLX
+mlem 995.68 12 0 Investment in AAPL
+mlem 31895.1 6 0 Investment in NFLX
+mlem 12695.9 7 0 Loss from selling GOOGL
+mlem 295.325 5 0 Loss from selling NFLX
+mlem 111 5 4 I lost one of my fingers

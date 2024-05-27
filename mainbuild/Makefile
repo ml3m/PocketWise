@@ -19,7 +19,7 @@ SRCS = src/main.cpp \
 OBJS = $(SRCS:.cpp=.o)
 
 # Executable name
-TARGET = finance_app
+TARGET = pocketwise 
 
 # Default rule
 all: $(TARGET)

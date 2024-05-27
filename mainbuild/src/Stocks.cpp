@@ -1,6 +1,7 @@
 #include "../include/precompiled.h"
 
 #include "../include/Stocks.h"
+#include "../include/ExpenseRevenue.h"
 
 void Investments::investmentTab(const std::string& username) {
     readInvestmentData("data/investment_data.txt");
@@ -39,6 +40,7 @@ void Investments::investmentTab(const std::string& username) {
 
     updateInvestmentData();
     writeInvestmentData("data/investment_data.txt");
+    writeTransactionHistory("data/transaction_history.txt");
 }
 
 void Investments::readInvestmentData(const std::string& filename) {
@@ -71,13 +73,20 @@ void Investments::writeInvestmentData(const std::string& filename) {
 }
 
 void Investments::loadAvailableStocks() {
-    // Predefined list of stocks and their prices
+    std::srand(std::time(0));
+    
     availableStocks = {
         {"AAPL", 156.80}, {"GOOGL", 2821.30}, {"AMZN", 3401.46},
         {"MSFT", 299.35}, {"TSLA", 759.49}, {"FB", 345.89},
         {"NFLX", 590.65}, {"NVDA", 195.55}, {"DIS", 175.18},
         {"V", 223.50}
     };
+
+    for (auto& stock : availableStocks) {
+        double percentageChange = ((std::rand() % 101) - 50) / 100.0;
+        //stock.price += stock.price * percentageChange;
+        stock.price *= (1 + percentageChange);
+    }
 }
 
 void Investments::parseInvestmentData() {
@@ -122,7 +131,23 @@ void Investments::investInStock(const std::string& username) {
     if (confirmation == 'Y' || confirmation == 'y') {
         Investment newInvestment = {username, chosenStock.name, shares, chosenStock.price};
         userInvestments.push_back(newInvestment);
+        logTransaction(username, chosenStock.name, shares, chosenStock.price, "buy");
+
         std::cout << "Invested $" << totalCost << " in " << chosenStock.name << std::endl;
+
+        // Ask user for the month of the transaction
+        int month;
+        std::cout << "Enter the month of the transaction (1-12): ";
+        std::cin >> month;
+
+        // Ensure the month is valid
+        if (month < 1 || month > 12) {
+            std::cout << "Invalid month. Transaction not logged for expense tracking.\n";
+            return;
+        }
+
+        ExpenseRevenue expenseTracker;
+        expenseTracker.writeExpense(username, totalCost, 0, "Investment in " + chosenStock.name, month);
     } else {
         std::cout << "Investment cancelled.\n";
     }
@@ -130,10 +155,11 @@ void Investments::investInStock(const std::string& username) {
 
 void Investments::displayInvestments(const std::string& username) {
     std::cout << "\nInvestment Portfolio:\n";
-    std::cout << std::setw(15) << "Username" << std::setw(15) << "Stock" << std::setw(15) << "Shares"
-              << std::setw(15) << "Price" << std::setw(15) << "Total" << std::setw(20) << "Difference"
-              << std::setw(20) << "Dividends" << std::endl;
-    std::cout << std::string(95, '-') << std::endl;
+    std::cout << std::setw(15) << "Username" << std::setw(15) << "Stock" << std::setw(10) << "Shares"
+              << std::setw(15) << "Initial Price" << std::setw(15) << "Current Price"
+              << std::setw(15) << "Total" << std::setw(15) << "Difference"
+              << std::setw(15) << "Dividends" << std::endl;
+    std::cout << std::string(115, '-') << std::endl;
 
     for (const auto& investment : userInvestments) {
         if (investment.username == username) {
@@ -149,9 +175,10 @@ void Investments::displayInvestments(const std::string& username) {
             double dividends = totalValue * 0.042;
 
             std::cout << std::setw(15) << investment.username << std::setw(15) << investment.stockName
-                      << std::setw(15) << investment.shares << std::setw(15) << currentPrice
-                      << std::setw(15) << totalValue << std::setw(20) << (difference >= 0 ? "+" : "") << difference
-                      << std::setw(20) << dividends << std::endl;
+                      << std::setw(10) << investment.shares << std::setw(15) << investment.initialPrice
+                      << std::setw(15) << currentPrice << std::setw(15) << totalValue
+                      << std::setw(15) << (difference >= 0 ? "+" : "-") << difference
+                      << std::setw(15) << dividends << std::endl;
         }
     }
 }
@@ -211,9 +238,47 @@ void Investments::sellShares(const std::string& username) {
         if (chosenInvestment->shares == 0) {
             userInvestments.erase(std::remove(userInvestments.begin(), userInvestments.end(), *chosenInvestment), userInvestments.end());
         }
+        logTransaction(username, chosenInvestment->stockName, shares, currentPrice, "sell");
+
         std::cout << "Sold " << shares << " shares of " << chosenInvestment->stockName << " for $" << totalSale << ".\n";
         std::cout << "Profit/Loss: $" << profit << "\n";
+
+        // Ask user for the month of the transaction
+        int month;
+        std::cout << "Enter the month of the transaction (1-12): ";
+        std::cin >> month;
+
+        // Ensure the month is valid
+        if (month < 1 || month > 12) {
+            std::cout << "Invalid month. Transaction not logged for revenue/expense tracking.\n";
+            return;
+        }
+
+        ExpenseRevenue profitOrLoss;
+        if (profit > 0) {
+            profitOrLoss.writeRevenue(username, profit, "Profit from selling " + chosenInvestment->stockName, month);
+        } else {
+            profitOrLoss.writeExpense(username, -profit, 0, "Loss from selling " + chosenInvestment->stockName, month);
+        }
     } else {
         std::cout << "Sale cancelled.\n";
     }
+}
+
+void Investments::logTransaction(const std::string& username, const std::string& stockName, int shares, double price, const std::string& type) {
+    transactionHistory.push_back({username, stockName, shares, price, type});
+}
+
+void Investments::writeTransactionHistory(const std::string& filename) {
+    std::ofstream outfile(filename, std::ios_base::app); // Append mode
+    if (!outfile.is_open()) {
+        std::cerr << "Error: Unable to open file " << filename << " for writing" << std::endl;
+        return;
+    }
+
+    for (const auto& transaction : transactionHistory) {
+        outfile << transaction.username << " " << transaction.stockName << " " << transaction.shares << " " << transaction.price << " " << transaction.type << std::endl;
+    }
+
+    outfile.close();
 }

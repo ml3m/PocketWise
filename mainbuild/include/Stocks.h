@@ -2,6 +2,10 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+#include <ctime>
 
 struct Stock {
     std::string name;
@@ -13,13 +17,20 @@ struct Investment {
     std::string stockName;
     int shares;
     double initialPrice; 
-    // def of operator == for comparing objects by all means
     bool operator==(const Investment& other) const {
         return username == other.username &&
                stockName == other.stockName &&
                shares == other.shares &&
                initialPrice == other.initialPrice;
     }
+};
+
+struct Transaction {
+    std::string username;
+    std::string stockName;
+    int shares;
+    double price;
+    std::string type; // "buy" or "sell"
 };
 
 class Investments {
@@ -29,7 +40,8 @@ public:
 private:
     std::vector<Stock> availableStocks;
     std::vector<Investment> userInvestments;
-    std::vector<std::string> investmentData; // Original data from file
+    std::vector<std::string> investmentData;
+    std::vector<Transaction> transactionHistory;
 
     void readInvestmentData(const std::string& filename);
     void writeInvestmentData(const std::string& filename);
@@ -39,4 +51,6 @@ private:
     void sellShares(const std::string& username);
     void parseInvestmentData();
     void updateInvestmentData();
+    void logTransaction(const std::string& username, const std::string& stockName, int shares, double price, const std::string& type);
+    void writeTransactionHistory(const std::string& filename);
 };
