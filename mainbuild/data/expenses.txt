@@ -35,3 +35,4 @@ mlem 111 5 4 I lost one of my fingers
 a 263.993 12 0 Loss from selling GOOGL
 a 335.552 1 0 Investment in AAPL
 mlem 2172.88 3 0 Investment in FB
+mlem 10868.3 7 0 Investment in TSLA

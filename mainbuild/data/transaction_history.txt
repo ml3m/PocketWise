@@ -21,3 +21,5 @@ a AAPL 2 167.776 buy
 a AAPL 2 178.752 sell
 mlem NFLX 5 545.761 sell
 mlem FB 6 362.147 buy
+mlem TSLA 15 724.553 buy
+mlem TSLA 15 800.502 sell
