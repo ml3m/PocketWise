@@ -1,9 +1,19 @@
-#include "../include/precompiled.h"
-
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <fstream>
+#include <sstream>  // Add this include for std::istringstream
+#include <unistd.h>
+#include <iostream>
+#include <ostream>
+#include <cctype>
+#include <string>
+#include <cstdio>
+#include <ctime>
 #include "../include/sha256.h"
 #include "../include/MainMenu.h"
 #include "../include/terminal_utils.h"
 #include "../include/UserAuthentication.h"
+#include <limits>
 
 #include "../include/global.h"
 

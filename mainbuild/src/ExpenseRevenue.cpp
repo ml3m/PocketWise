@@ -1,4 +1,15 @@
-#include "../include/precompiled.h"
+#include <sys/ioctl.h>
+#include <limits>  // Add this include for std::numeric_limits
+#include <termios.h>
+#include <fstream>
+#include <sstream>  // Add this include for std::istringstream
+#include <unistd.h>
+#include <iostream>
+#include <ostream>
+#include <cctype>
+#include <string>
+#include <cstdio>
+#include <ctime>
 #include "../include/ExpenseRevenue.h"
 #include "../include/terminal_utils.h"
 #include <iostream>

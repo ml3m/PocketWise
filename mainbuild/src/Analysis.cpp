@@ -1,7 +1,18 @@
-#include "../include/precompiled.h"
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <unistd.h>
+#include <iostream>
+#include <ostream>
+#include <cctype>
+#include <vector>
+#include <string>
+#include <cstdio>
+#include <ctime>
+#include <fstream>
+#include <sstream>  // Add this include for std::istringstream
 #include "../include/Analysis.h"
 #include "../include/ExpenseRevenue.h"
-
+#include <limits>  // Add this include for std::numeric_limits
 void Analysis::monthAnalysis(const std::string& username) {
     int month;
     std::cout << "Enter month (1-12): ";
@@ -65,6 +76,7 @@ void Analysis::monthAnalysis(const std::string& username) {
 
 }
 
+/*
 void Analysis::updatePieChart(const std::string& username) {
     std::vector<double> amounts;
     std::vector<std::string> categories;
@@ -101,3 +113,4 @@ void Analysis::updatePieChart(const std::string& username) {
     matplot::legend(categories);
     matplot::show();
 }
+*/

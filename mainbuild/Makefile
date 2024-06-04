@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++17 -I./include
-LDFLAGS = -lmatplot 
+LDFLAGS = 
 
 # Source and object files
 SRCS = src/main.cpp \

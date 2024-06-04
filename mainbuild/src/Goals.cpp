@@ -1,7 +1,19 @@
-#include "../include/precompiled.h"
-
+#include <sys/ioctl.h>
+#include <limits>  // Add this include for std::numeric_limits
+#include <termios.h>
+#include <fstream>
+#include <sstream>  // Add this include for std::istringstream
+#include <vector>
+#include <unistd.h>
+#include <iostream>
+#include <ostream>
+#include <cctype>
+#include <string>
+#include <cstdio>
+#include <ctime>
 #include "../include/Goals.h"
 #include "../include/terminal_utils.h"
+#include <iomanip>
 
 void Goals::writeGoal(const std::string& username, double amount, const std::string& goalTitle, int month, double amountLeft, double amountPaid) {
     std::ofstream outfile("data/goals.txt", std::ios::app); // Create or open the expenses file

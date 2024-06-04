@@ -1,9 +1,21 @@
-#include "../include/precompiled.h"
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <fstream>
+#include <sstream>  // Add this include for std::istringstream
+#include <unistd.h>
 #include <iostream>
-#include <matplot/axes_objects/labels.h>
+#include <ostream>
+#include <cctype>
+#include <string>
+#include <cstdio>
+#include <ctime>
+#include <iostream>
 #include <string>
 #include "../include/terminal_utils.h"
 
+#include <iomanip>  // For std::setw
+#include <thread>   // For std::this_thread::sleep_for
+#include <chrono>   // For std::chrono::seconds and std::chrono::system_clock
 // this is very cool
 void clear_screen() {
     std::cout << "\033[2J\033[1;1H";
