@@ -19,12 +19,12 @@ To set up the project on your local machine, follow these steps:
 
 1. **Clone the Repository**:
     ```bash
-    git clone [<repository-url>](https://github.com/ml3m/PocketWise)
+    git clone https://github.com/ml3m/PocketWise
     ```
 
 2. **Navigate to the Project Directory**:
     ```bash
-    cd stock-investment-tracker
+    cd PocketWise
     ```
 
 3. **Build the Project**:
@@ -36,4 +36,4 @@ To set up the project on your local machine, follow these steps:
 ## Usage
 Run the application from the terminal:
 ```bash
-./investment_tracker
+./pocketwise
