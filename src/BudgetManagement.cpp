@@ -208,7 +208,7 @@ void BudgetManagement::printBudgets(const std::string& username){
     std::ifstream infile("data/budgets.txt");
     double budget = 0.0;
     std::string line;
-    std::cout<<"\t\tuser: mlem\t"<<"month\t"<<"budget\t"<<std::endl;
+    std::cout<<"\t\tuser: " << username<< "\t"<<"month\t"<<"budget\t"<<std::endl;
     while (getline(infile, line)) {
         std::string usr;
         int m;
