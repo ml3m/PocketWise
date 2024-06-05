@@ -19,7 +19,7 @@ To set up the project on your local machine, follow these steps:
 
 1. **Clone the Repository**:
     ```bash
-    git clone <repository-url>
+    git clone [<repository-url>](https://github.com/ml3m/PocketWise)
     ```
 
 2. **Navigate to the Project Directory**:
