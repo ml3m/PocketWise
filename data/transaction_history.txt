@@ -27,3 +27,7 @@ prof AAPL 12 156.33 buy
 prof AAPL 12 165.738 sell
 prof GOOGL 10 2841.05 buy
 prof GOOGL 10 2922.87 sell
+prof AMZN 90 3313.02 buy
+prof AMZN 90 3268.8 sell
+prof AAPL 20 148.019 buy
+prof AAPL 20 142.845 sell

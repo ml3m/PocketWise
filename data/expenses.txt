@@ -38,3 +38,7 @@ mlem 2172.88 3 0 Investment in FB
 mlem 10868.3 7 0 Investment in TSLA
 prof 1875.96 1 0 Investment in AAPL
 prof 28410.5 10 0 Investment in GOOGL
+prof 298172 9 0 Investment in AMZN
+prof 3979.71 9 0 Loss from selling AMZN
+prof 2960.38 3 0 Investment in AAPL
+prof 103.488 3 0 Loss from selling AAPL

@@ -17,3 +17,4 @@ mlem 70.878 3 Profit from selling NFLX
 mlem 1139.24 7 Profit from selling TSLA
 prof 112.896 1 Profit from selling AAPL
 prof 29228.7 10 Profit from selling GOOGL
+prof 2960.38 3 Profit from selling AAPL

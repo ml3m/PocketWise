@@ -269,6 +269,7 @@ void Investments::sellShares(const std::string& username) {
         if (profit > 0) {
             profitOrLoss.writeRevenue(username, totalSale, "Profit from selling " + chosenInvestment->stockName, month);
         } else {
+            profitOrLoss.writeRevenue(username, totalSale-profit, "Profit from selling " + chosenInvestment->stockName, month);
             profitOrLoss.writeExpense(username, -profit, 0, "Loss from selling " + chosenInvestment->stockName, month);
         }
     } else {
