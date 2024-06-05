@@ -1,4 +1,0 @@
-local:
-	g++ src/main.cpp src/sha256.cpp -o main -lmatplot
-clean:
-	rm -rf main
