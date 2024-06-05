@@ -41,7 +41,19 @@ void Goals::GoalTab(const std::string& username) {
         double amount, leftA = 0, paidA = 0;
         if (need_menu) {
             clear_screen();
+            int terminal_width, terminal_height;
+            get_terminal_size(terminal_width, terminal_height);
+
+            int menu_height = 10; // Number of lines in the menu
+
+            // Calculate the vertical positions
+            int half_height = terminal_height / 2;
+            print_topClock();
+            for (int i = 0; i < half_height - menu_height/2; ++i) {
+                std::cout << std::endl;
+            }
         }
+
 
         std::cout << center_text("Goals Tab\n", terminal_width);
         std::cout << center_text("1. Create Goal\n", terminal_width);
@@ -201,7 +213,6 @@ void Goals::dashboard_component_Goals(const std::string& username) {
     // clear scree + setup for space before menu
     // for each item in menu do the thingy with need_menu.
     // center print for all, maybe add spaces   
-    clear_screen();
     std::ifstream infile("data/goals.txt");
 
     if (!infile.is_open()) {
@@ -226,6 +237,9 @@ void Goals::dashboard_component_Goals(const std::string& username) {
 
     if (userGoals.empty()) {
         std::cout << "No goals found for " << username << std::endl;
+        std::cin.ignore();
+        std::cout << "Press Enter to go back..." << std::endl;
+        std::cin.ignore();
         return;
     }
 
@@ -260,7 +274,8 @@ void Goals::dashboard_component_Goals(const std::string& username) {
                   << std::setw(15) << std::fixed << std::setprecision(2) << completionPercentage // Display completion percentage with 2 decimal places
                   << std::endl;
     }
-    std::cout << "Press Enter to Go back...";
     std::cin.ignore();
+    std::cin.ignore();
+    return;
 }
 

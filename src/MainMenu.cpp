@@ -18,6 +18,7 @@
 #include "../include/terminal_utils.h"
 #include "../include/Stocks.h"
 #include <string>
+#include <unordered_map>
 
 MainMenu::MainMenu(){}
 

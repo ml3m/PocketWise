@@ -1,2 +1,4 @@
-mlem 2560.00 500.00 2060.00 4 Lens
-a 380 380 0 8 mouse
+mlem 2560.00 490.00 2070.00 4 Lens
+prof 380.00 -420.00 800.00 8 mouse
+prof 80 80 0 1 water
+prof 1800 1800 0 8 keyboard
