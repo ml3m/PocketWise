@@ -23,3 +23,7 @@ mlem NFLX 5 545.761 sell
 mlem FB 6 362.147 buy
 mlem TSLA 15 724.553 buy
 mlem TSLA 15 800.502 sell
+prof AAPL 12 156.33 buy
+prof AAPL 12 165.738 sell
+prof GOOGL 10 2841.05 buy
+prof GOOGL 10 2922.87 sell
