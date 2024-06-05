@@ -7,12 +7,12 @@
 Stock Investment Tracker is a console-based application designed to help users manage their stock investments. It allows users to create, view, update, and delete their investment goals, and track their revenue and expenses related to stock trading. 
 
 ## Features
-- **Expense/Revenue Tracker **; manages transactions.
-- **Goals keeper **; goals that can be updated.
-- **Create Investment **: Set financial targets for your investments.
-- **View Investment **: See all your active investment goals.
-- **Update Investment **: Modify your existing investment goals.
-- **Delete Investment **: Remove investment goals that are no longer relevant.
+- **Expense/Revenue Tracker**; manages transactions.
+- **Goals keeper**; goals that can be updated.
+- **Create Investment**: Set financial targets for your investments.
+- **View Investment**: See all your active investment goals.
+- **Update Investment**: Modify your existing investment goals.
+- **Delete Investment**: Remove investment goals that are no longer relevant.
 - **Track Transactions**: Log and track buy/sell transactions.
 - **Profit/Loss Calculation**: Automatically calculates and displays profit or loss from transactions.
 
