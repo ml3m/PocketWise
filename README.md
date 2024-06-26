@@ -34,8 +34,8 @@ To set up the project on your local machine, follow these steps:
     ```bash
     make
     ```
-N. Recompile
-    Ensure you will clean the compiled binaries.
+    
+N. **clean binaries**:
     ```bash
     make clean
     ```
