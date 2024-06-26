@@ -35,7 +35,7 @@ To set up the project on your local machine, follow these steps:
     make
     ```
     
-N. **clean binaries**:
+4. **clean binaries**:
     ```bash
     make clean
     ```
