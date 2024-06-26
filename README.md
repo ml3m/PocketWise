@@ -34,6 +34,11 @@ To set up the project on your local machine, follow these steps:
     ```bash
     make
     ```
+N. Recompile
+    Ensure you will clean the compiled binaries.
+    ```bash
+    make clean
+    ```
 
 ## Usage
 Run the application from the terminal:
