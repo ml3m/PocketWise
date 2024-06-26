@@ -1,4 +1,3 @@
-> [!IMPORTANT]
 <p align="center"><img alt="Pocket Wise Logo" src="./assets/homepage1.png" /></a></p>
 
 
