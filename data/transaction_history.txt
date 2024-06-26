@@ -31,3 +31,5 @@ prof AMZN 90 3313.02 buy
 prof AMZN 90 3268.8 sell
 prof AAPL 20 148.019 buy
 prof AAPL 20 142.845 sell
+mlem AAPL 10 166.992 buy
+mlem TSLA 34 2660.49 sell

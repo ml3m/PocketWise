@@ -1,35 +1,38 @@
 #include <sys/ioctl.h>
 #include <termios.h>
-#include <fstream>
-#include <sstream>  // Add this include for std::istringstream
 #include <unistd.h>
 #include <iostream>
+#include <iostream>
+#include <iomanip>  
 #include <ostream>
 #include <cctype>
 #include <string>
-#include <cstdio>
-#include <ctime>
-#include <iostream>
 #include <string>
+#include <thread>  
+#include <chrono> 
+#include <ctime>
+
+
 #include "../include/terminal_utils.h"
 
-#include <iomanip>  // For std::setw
-#include <thread>   // For std::this_thread::sleep_for
-#include <chrono>   // For std::chrono::seconds and std::chrono::system_clock
+
 // this is very cool
 void clear_screen() {
     std::cout << "\033[2J\033[1;1H";
 }
+
 void get_terminal_size(int &width, int &height) {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     width = w.ws_col;
     height = w.ws_row;
 }
+
 std::string center_text(const std::string &text, int width) {
     int pad = (width - text.size()) / 2;
     return std::string(pad, ' ') + text;
 }
+
 int central_print_prepare_terminal(int printing_height){
         int terminal_width, terminal_height;
         get_terminal_size(terminal_width, terminal_height);
@@ -40,6 +43,7 @@ int central_print_prepare_terminal(int printing_height){
         }
         return terminal_width;
 }
+
 void print_topClock(){
     int terminal_width, terminal_height;
     get_terminal_size(terminal_width, terminal_height);
@@ -55,6 +59,7 @@ void print_topClock(){
     std::cout << "\r" << std::setw(15) << std::left << center_text(currentTimeAndDay, terminal_width) << std::flush;
     std::this_thread::sleep_for(std::chrono::seconds(1));
 }
+
 void print_topName(const std::string username){
     /*bruv Idek abof this func idkidkidk*/
     int terminal_width, terminal_height;
@@ -82,6 +87,7 @@ std::string getCurrentTimeAndDay() {
     std::string timeDayStr = std::string(timeBuffer) + " " + std::string(dayBuffer);
     return timeDayStr;
 }
+
 std::string get_password() {
     // Disable echoing
     termios old_term, new_term;

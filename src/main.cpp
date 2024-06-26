@@ -1,19 +1,21 @@
 #include <sys/ioctl.h>
-#include <fstream>
 #include <termios.h>
-#include <unistd.h>
 #include <iostream>
+#include <unistd.h>
 #include <ostream>
 #include <cctype>
 #include <string>
-#include <cstdio>
 #include <ctime>
+
+
+/************** header files import **************/
 #include "../include/terminal_utils.h"
 #include "../include/UserAuthentication.h"
 
-/************************* MAIN ******************************/ 
 
+/************************* MAIN ******************************/ 
 int main() {
+    // the main functionality that goes to the login + ascii art formating + pedding math
 
     int choice;
     UserAuthentication loger;
@@ -43,13 +45,13 @@ int main() {
             line = center_text(line, terminal_width);
         }
 
-        // Center each line of the menu horizontally
+        // center each line on horizontal side 
         login = center_text(login, terminal_width);
         create_account = center_text(create_account, terminal_width);
         quit = center_text(quit, terminal_width);
         enter_choice = center_text(enter_choice, terminal_width);
 
-        // Calculate the total number of lines in the ASCII art and menu
+        // total number of lines in the ASCII art and menu
         int art_height = sizeof(art) / sizeof(art[0]);
         int menu_height = 4; // Number of lines in the menu
 
@@ -58,12 +60,12 @@ int main() {
         int art_start = half_height - (art_height / 2 + menu_height + 1); // Add extra space between the art and the menu
         int menu_start = art_start + art_height + 2; // Add extra space between the art and the menu
 
-        // Print blank lines to position the ASCII art
+        // Print blank lines for right distance in ascii art 
         for (int i = 0; i < art_start; ++i) {
             std::cout << std::endl;
         }
 
-        // Print the ASCII art
+        //printing of the ASCII art
         for (const std::string &line : art) {
             std::cout << line << std::endl;
         }
@@ -79,9 +81,7 @@ int main() {
         std::cout << quit << std::endl;
         std::cout << enter_choice;
         std::cin >> choice;
-
         std::cin.ignore();
-
 
 
         switch(choice) {

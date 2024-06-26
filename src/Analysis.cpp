@@ -1,19 +1,19 @@
 #include <sys/ioctl.h>
 #include <termios.h>
-#include <unistd.h>
 #include <iostream>
+#include <unistd.h>
+#include <fstream>
+#include <sstream>
 #include <ostream>
 #include <cctype>
-#include <vector>
 #include <string>
-#include <cstdio>
 #include <ctime>
-#include <fstream>
-#include <sstream>  // Add this include for std::istringstream
+
+/************** header files import **************/
 #include "../include/Analysis.h"
-#include "../include/ExpenseRevenue.h"
-#include <limits>  // Add this include for std::numeric_limits
+
 void Analysis::monthAnalysis(const std::string& username) {
+    // File handling + Expenses/Revenues + month Analysis for months 1-12 
     int month;
     std::cout << "Enter month (1-12): ";
     std::cin >> month;

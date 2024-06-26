@@ -1,22 +1,24 @@
 #include <sys/ioctl.h>
-#include <limits>  // Add this include for std::numeric_limits
 #include <termios.h>
-#include <fstream>
-#include <sstream>  // Add this include for std::istringstream
-#include <vector>
 #include <unistd.h>
 #include <iostream>
 #include <ostream>
+#include <iomanip>
+#include <fstream>
+#include <sstream>
+#include <vector>
 #include <cctype>
 #include <string>
 #include <cstdio>
 #include <ctime>
+
+
+/************** header files import **************/
 #include "../include/Goals.h"
 #include "../include/terminal_utils.h"
-#include <iomanip>
 
 void Goals::writeGoal(const std::string& username, double amount, const std::string& goalTitle, int month, double amountLeft, double amountPaid) {
-    std::ofstream outfile("data/goals.txt", std::ios::app); // Create or open the expenses file
+    std::ofstream outfile("data/goals.txt", std::ios::app); 
     if (outfile.is_open()) {
         outfile << username << " " << amount << " " << amountLeft << " " << amountPaid << " " << month << " " << goalTitle <<std::endl;
         std::cout << "Goal '" <<goalTitle << "' added successfully!" << std::endl;
@@ -130,7 +132,7 @@ void Goals::updateGoal(const std::string& username, int goalIndex, double additi
     amountPaid += additionalAmount;
 
     std::ostringstream oss;
-    oss << std::fixed << std::setprecision(2); // Set precision for doubles
+    oss << std::fixed << std::setprecision(2);
     oss << username << " " << amount << " " << amountLeft << " " << amountPaid << " " << month << " " << goalTitle;
 
     goals[goalIndex - 1] = oss.str();
@@ -210,9 +212,9 @@ void Goals::deleteGoal(const std::string& username) {
 }
 
 void Goals::dashboard_component_Goals(const std::string& username) {
-    // clear scree + setup for space before menu
-    // for each item in menu do the thingy with need_menu.
-    // center print for all, maybe add spaces   
+    /* clear scree + setup for space before menu
+     * for each item in menu do the thingy with need_menu.
+     * center print for all, maybe add spaces */
     std::ifstream infile("data/goals.txt");
 
     if (!infile.is_open()) {
@@ -250,7 +252,7 @@ void Goals::dashboard_component_Goals(const std::string& username) {
               << std::setw(15) << "Amount Left"
               << std::setw(15) << "Amount Paid"
               << std::setw(10) << "Month"
-              << std::setw(15) << "Completion %" // Added column for completion percentage
+              << std::setw(15) << "Completion %" 
               << std::endl;
     std::cout << std::string(90, '-') << std::endl;
 
@@ -262,16 +264,19 @@ void Goals::dashboard_component_Goals(const std::string& username) {
 
         iss >> goalUsername >> amount >> amountLeft >> amountPaid >> month >> goalTitle;
 
-        // Calculate completion percentage
+// Calculate completion percentage
+
         double completionPercentage = ((amount - amountLeft) / amount) * 100;
 
+// Display completion percentage with 2 decimal places
+//
         std::cout << std::setw(5) << i + 1 // Index starts from 1
                   << std::setw(20) << std::left << goalTitle
                   << std::setw(15) << amount
                   << std::setw(15) << amountLeft
                   << std::setw(15) << amountPaid
                   << std::setw(10) << month
-                  << std::setw(15) << std::fixed << std::setprecision(2) << completionPercentage // Display completion percentage with 2 decimal places
+                  << std::setw(15) << std::fixed << std::setprecision(2) << completionPercentage 
                   << std::endl;
     }
     std::cin.ignore();

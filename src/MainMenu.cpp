@@ -1,15 +1,18 @@
+#include <unordered_map>
 #include <sys/ioctl.h>
-#include <limits>  // Add this include for std::numeric_limits
 #include <termios.h>
-#include <fstream>
-#include <sstream>  // Add this include for std::istringstream
 #include <unistd.h>
 #include <iostream>
+#include <fstream>
+#include <sstream>  
 #include <ostream>
 #include <cctype>
 #include <string>
-#include <cstdio>
+#include <string>
 #include <ctime>
+
+
+/************** header files import **************/
 #include "../include/Goals.h"
 #include "../include/Analysis.h"
 #include "../include/MainMenu.h"
@@ -17,8 +20,6 @@
 #include "../include/BudgetManagement.h"
 #include "../include/terminal_utils.h"
 #include "../include/Stocks.h"
-#include <string>
-#include <unordered_map>
 
 MainMenu::MainMenu(){}
 
@@ -69,7 +70,7 @@ void MainMenu::mainMenu(const std::string& username) {
                 std::cout << "Dashboard" << std::endl;
                 myanalysis.monthAnalysis(username);
                 dashboard(username);
-                // annoying thingy 
+                // feature was canceled
                 //myanalysis.updatePieChart(username);
                 need_menu = 1;
                 break;
@@ -96,9 +97,10 @@ void MainMenu::printmenu() const {
     int terminal_width, terminal_height;
     get_terminal_size(terminal_width, terminal_height);
 
-    int menu_height = 10; // Number of lines in the menu
+//lines in the menu
+    int menu_height = 10; 
 
-    // Calculate the vertical positions
+// Calculate the vertical positions
     int half_height = terminal_height / 2;
 
     for (int i = 0; i < half_height - menu_height/2; ++i) {

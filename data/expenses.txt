@@ -42,3 +42,5 @@ prof 298172 9 0 Investment in AMZN
 prof 3979.71 9 0 Loss from selling AMZN
 prof 2960.38 3 0 Investment in AAPL
 prof 103.488 3 0 Loss from selling AAPL
+mlem 1669.92 4 0 Investment in AAPL
+mlem 20815.6 10 0 Loss from selling TSLA

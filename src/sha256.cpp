@@ -1,18 +1,15 @@
-#include "../include/sha256.h"
 #include <string>
 #include <bitset>
 #include <sys/ioctl.h>
-#include <fstream>
-#include <sstream>  // Add this include for std::istringstream
 #include <termios.h>
 #include <unistd.h>
-#include <iostream>
-#include <ostream>
 #include <cctype>
 #include <string>
 #include <cstdio>
 #include <ctime>
 #include <math.h>
+
+#include "../include/sha256.h"
 
 std::string str = "";
 

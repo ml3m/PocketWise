@@ -1,21 +1,21 @@
 #include <sys/ioctl.h>
-#include <limits>  // Add this include for std::numeric_limits
 #include <termios.h>
-#include <fstream>
-#include <sstream>  // Add this include for std::istringstream
+#include <iostream>
 #include <unistd.h>
 #include <iostream>
+#include <fstream>
+#include <sstream> 
 #include <ostream>
 #include <cctype>
 #include <string>
-#include <cstdio>
 #include <ctime>
+
+/************** header files import **************/
 #include "../include/ExpenseRevenue.h"
 #include "../include/terminal_utils.h"
-#include <iostream>
 
 void ExpenseRevenue::writeExpense(const std::string& username, double amount, int category, const std::string& description, int month) {
-    std::ofstream outfile("data/expenses.txt", std::ios::app); // Create or open the expenses file
+    std::ofstream outfile("data/expenses.txt", std::ios::app);
     if (outfile.is_open()) {
         outfile << username << " " << amount << " " << month << " " << category << " " << description << std::endl;
         std::cout << "Expense added successfully!" << std::endl;
@@ -26,7 +26,7 @@ void ExpenseRevenue::writeExpense(const std::string& username, double amount, in
 }
 
 void ExpenseRevenue::writeRevenue(const std::string& username, double amount, const std::string& description, int month) {
-    std::ofstream outfile("data/revenues.txt", std::ios::app); // Create or open the revenues file
+    std::ofstream outfile("data/revenues.txt", std::ios::app);
     if (outfile.is_open()) {
         outfile << username << " " << amount << " " << month << " " << description << std::endl;
         std::cout << "Revenue added successfully!" << std::endl;
@@ -41,7 +41,6 @@ void ExpenseRevenue::addExpense(const std::string& username) {
     int category, month;
     std::string description;
     
-    //beauty
     clear_screen();
     print_topClock();
     int printing_height = 11;
@@ -144,6 +143,7 @@ void ExpenseRevenue::readRevenues(const std::string& username) {
 }
 
 std::string ExpenseRevenue::getCategoryName(int category) {
+    //used for selecting the right category in the Expense part of the class.
     switch(category) {
         case 1:
             return "Housing";
